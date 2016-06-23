@@ -3,18 +3,21 @@
 <head>
   <meta charset="utf-8">
   
-  <title>flask-first-view | 日課書</title>
+  <title>Flask简介 | 日課書</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description">
+  <meta name="description" content="Flask是一个Python的小型Web程序框架，它基于Wekzeug和Jinja 2两个库，有很好的可扩展性。选择学习Flask就是基于他简洁和可扩展的特性。
+Web应用的本质是，客户端向服务器发送请求，服务器读取请求内容，返回给客户端相应的数据。如果是静态网站，譬如Hexo博客，客户端输入地址，服务器直接返回静态的HTML页面即可，服务器程序并没有其他任务。但对于动态网站，服务器程序会根据请求">
 <meta property="og:type" content="article">
-<meta property="og:title" content="flask-first-view">
+<meta property="og:title" content="Flask简介">
 <meta property="og:url" content="http://yoursite.com/2016/06/23/flask-first-view/index.html">
 <meta property="og:site_name" content="日課書">
-<meta property="og:description">
-<meta property="og:updated_time" content="2016-06-23T14:40:50.000Z">
+<meta property="og:description" content="Flask是一个Python的小型Web程序框架，它基于Wekzeug和Jinja 2两个库，有很好的可扩展性。选择学习Flask就是基于他简洁和可扩展的特性。
+Web应用的本质是，客户端向服务器发送请求，服务器读取请求内容，返回给客户端相应的数据。如果是静态网站，譬如Hexo博客，客户端输入地址，服务器直接返回静态的HTML页面即可，服务器程序并没有其他任务。但对于动态网站，服务器程序会根据请求">
+<meta property="og:updated_time" content="2016-06-23T14:44:12.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="flask-first-view">
-<meta name="twitter:description">
+<meta name="twitter:title" content="Flask简介">
+<meta name="twitter:description" content="Flask是一个Python的小型Web程序框架，它基于Wekzeug和Jinja 2两个库，有很好的可扩展性。选择学习Flask就是基于他简洁和可扩展的特性。
+Web应用的本质是，客户端向服务器发送请求，服务器读取请求内容，返回给客户端相应的数据。如果是静态网站，譬如Hexo博客，客户端输入地址，服务器直接返回静态的HTML页面即可，服务器程序并没有其他任务。但对于动态网站，服务器程序会根据请求">
   
     <link rel="alternate" href="/atom.xml" title="日課書" type="application/atom+xml">
   
@@ -85,7 +88,7 @@
     
   
     <h1 class="article-title" itemprop="name">
-      flask-first-view
+      Flask简介
     </h1>
   
 
@@ -94,7 +97,7 @@
 
   <div class="article-meta">
     <div class="article-datetime">
-  <a href="/2016/06/23/flask-first-view/" class="article-date"><time datetime="2016-06-23T14:40:50.000Z" itemprop="datePublished">2016-06-23</time></a>
+  <a href="/2016/06/23/flask-first-view/" class="article-date"><time datetime="2016-06-23T14:44:12.000Z" itemprop="datePublished">2016-06-23</time></a>
 </div>
 
     
@@ -105,7 +108,24 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <p>Flask是一个Python的小型Web程序框架，它基于Wekzeug和Jinja 2两个库，有很好的可扩展性。选择学习Flask就是基于他简洁和可扩展的特性。</p>
+<p>Web应用的本质是，客户端向服务器发送请求，服务器读取请求内容，返回给客户端相应的数据。如果是静态网站，譬如Hexo博客，客户端输入地址，服务器直接返回静态的HTML页面即可，服务器程序并没有其他任务。但对于动态网站，服务器程序会根据请求的不同，对HTML页面进行相应的加工，返回不同内容的页面。</p>
+<p>对应这种特质，一个Web程序，就是响应不同HTTP请求的函数。使用Web框架后，我们在编写Web应用，就是编写对应URL处理函数。</p>
+<p>在Flask中URL与处理函数的对应，用<code>@app.route（）</code>装饰器实现。route同时能识别不同的HTTP请求类型。</p>
+<p>Flask返回页面，可以用<code>render_template()</code>来渲染Jinja模板。</p>
+<p>同时HTTP请求中也可能包含客户端上传的数据，用<code>request</code>即可获得。同样利用<code>request</code>还可以获得Cookie数据。</p>
+<p>通过<code>redirect()</code>我们可以重定向用户的请求，以达到权限控制的目的。同时用<code>@app.errorhandler()</code>来返回个性化的错误提醒页面。</p>
+<p>利用<code>make_response()</code>可以设置响应的内容，状态码，头部信息等。</p>
+<p>利用<code>Session</code>可以设置干安全的Cookie。</p>
+<p>在网站的交互中，可以利用<code>flash()</code>发出反馈实时信息，模板中可以利用<code>get_flashed_messages()</code>来获得反馈信息。</p>
+<p>服务器程序可以使用<code>app.logger</code>来记录日志内容。</p>
+<p>参考内容：</p>
+<ul>
+<li><a href="http://flask.pocoo.org/docs/0.11/quickstart/" target="_blank" rel="external">Flask Document/Quickstart</a></li>
+<li><a href="http://www.liaoxuefeng.com/wiki/001374738125095c955c1e6d8bb493182103fac9270762a000/001386832689740b04430a98f614b6da89da2157ea3efe2000" target="_blank" rel="external">廖雪峰Python教程-WSGI接口</a></li>
+<li><a href="http://www.liaoxuefeng.com/wiki/001374738125095c955c1e6d8bb493182103fac9270762a000/001386832704232d6fb5df42dd34a7890fa6254351faac7000" target="_blank" rel="external">廖雪峰Python教程-使用Web框架</a></li>
+</ul>
+
       
     </div>
 
@@ -115,11 +135,13 @@
     
 
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/06/23/flask-first-view/" data-id="cipsf255k0003ly2rbxno84cg" class="article-share-link">
+      <a data-url="http://yoursite.com/2016/06/23/flask-first-view/" data-id="cipsf6kpo0001mn2rviyzuyvd" class="article-share-link">
         <i class="fa fa-share"></i> Share
       </a>
       
       
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/flask/">flask</a></li></ul>
+
 
     </footer>
   </div>
@@ -130,7 +152,7 @@
   <li role="presentation">
     <a href="/2016/06/23/time-log/" id="article-nav-older" class="article-nav-link-wrap">
       <i class="fa fa-chevron-left pull-left"></i>
-      <span class="article-nav-link-title">time-log</span>
+      <span class="article-nav-link-title">进度记录：6月23更新 day01 | +4H | [4/100]</span>
     </a>
   </li>
   
@@ -160,7 +182,7 @@
   
   <div class="sidebar-module">
     <h4>Tags</h4>
-    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/100挑战/">100挑战</a><span class="sidebar-module-list-count">1</span></li></ul>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/100挑战/">100挑战</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/记录/">记录</a><span class="sidebar-module-list-count">1</span></li></ul>
   </div>
 
 
@@ -169,7 +191,7 @@
   <div class="sidebar-module">
     <h4>Tag Cloud</h4>
     <p class="tagcloud">
-      <a href="/tags/100挑战/" style="font-size: 10px;">100挑战</a>
+      <a href="/tags/100挑战/" style="font-size: 10px;">100挑战</a> <a href="/tags/flask/" style="font-size: 10px;">flask</a> <a href="/tags/记录/" style="font-size: 10px;">记录</a>
     </p>
   </div>
 
@@ -188,11 +210,11 @@
     <ul class="sidebar-module-list">
       
         <li>
-          <a href="/2016/06/23/flask-first-view/">flask-first-view</a>
+          <a href="/2016/06/23/flask-first-view/">Flask简介</a>
         </li>
       
         <li>
-          <a href="/2016/06/23/time-log/">time-log</a>
+          <a href="/2016/06/23/time-log/">进度记录：6月23更新 day01 | +4H | [4/100]</a>
         </li>
       
         <li>
