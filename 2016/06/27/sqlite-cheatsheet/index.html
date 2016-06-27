@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>SQLite Cheatsheet | 日課書</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="SQLite是一个轻量级的数据库，它以文件的形式存储在硬盘中，适合小型的简单应用。有些应用也会采用SQLite来做产品原型，然后把它迁移到其他功能更强大的数据库，比如：MySQL、PostgreSQL等。
+Python标准库 —— sqlite3参考：Python-Docs/sqlite3
+123456789101112131415161718192021222324252627282930313">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SQLite Cheatsheet">
+<meta property="og:url" content="http://yoursite.com/2016/06/27/sqlite-cheatsheet/index.html">
+<meta property="og:site_name" content="日課書">
+<meta property="og:description" content="SQLite是一个轻量级的数据库，它以文件的形式存储在硬盘中，适合小型的简单应用。有些应用也会采用SQLite来做产品原型，然后把它迁移到其他功能更强大的数据库，比如：MySQL、PostgreSQL等。
+Python标准库 —— sqlite3参考：Python-Docs/sqlite3
+123456789101112131415161718192021222324252627282930313">
+<meta property="og:updated_time" content="2016-06-27T08:46:20.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SQLite Cheatsheet">
+<meta name="twitter:description" content="SQLite是一个轻量级的数据库，它以文件的形式存储在硬盘中，适合小型的简单应用。有些应用也会采用SQLite来做产品原型，然后把它迁移到其他功能更强大的数据库，比如：MySQL、PostgreSQL等。
+Python标准库 —— sqlite3参考：Python-Docs/sqlite3
+123456789101112131415161718192021222324252627282930313">
+  
+    <link rel="alternate" href="/atom.xml" title="日課書" type="application/atom+xml">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+          <li><a href="/atom.xml" title="RSS Feed"><i class="fa fa-rss"></i></a></li>
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">日課書</h1>
+  
+    <p class="lead blog-description">编程100小时挑战</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-8 blog-main">
+          <article id="post-sqlite-cheatsheet" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      SQLite Cheatsheet
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2016/06/27/sqlite-cheatsheet/" class="article-date"><time datetime="2016-06-27T06:34:10.000Z" itemprop="datePublished">2016-06-27</time></a>
+</div>
+
+    
+    
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>SQLite是一个轻量级的数据库，它以文件的形式存储在硬盘中，适合小型的简单应用。有些应用也会采用SQLite来做产品原型，然后把它迁移到其他功能更强大的数据库，比如：MySQL、PostgreSQL等。</p>
+<h3 id="Python标准库-——-sqlite3"><a href="#Python标准库-——-sqlite3" class="headerlink" title="Python标准库 —— sqlite3"></a>Python标准库 —— sqlite3</h3><p>参考：<a href="https://docs.python.org/2/library/sqlite3.html" target="_blank" rel="external">Python-Docs/sqlite3</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line">conn = sqlite3.connect(<span class="string">'example.db'</span>)</span><br><span class="line">c = conn.cursor()</span><br><span class="line"></span><br><span class="line"><span class="comment"># Create tables</span></span><br><span class="line">c.execute(<span class="string">'''CREATE TABLE stocks</span><br><span class="line">          (date text, trans text, symbol text, qty real, price real)'''</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Insert a row of database</span></span><br><span class="line">c.execute(<span class="string">"INSERT INTO stocks VALUES ('2016-06-27', 'BUY', 'APPL', 100, 100)"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Save (commit) the changes</span></span><br><span class="line">conn.commit()</span><br><span class="line"></span><br><span class="line">conn.close()</span><br><span class="line"></span><br><span class="line"><span class="comment"># Read from database</span></span><br><span class="line">conn = sqlite3.connect(<span class="string">'example.db'</span>)</span><br><span class="line">c = conn.cursor()</span><br><span class="line"></span><br><span class="line"><span class="comment"># Put ? as a placeholder and then provide a tuple of values</span></span><br><span class="line">t = (<span class="string">'APPL'</span>,)</span><br><span class="line">c.execute(<span class="string">'SELECT * FROM stocks WHERE symbol=?'</span>, t)</span><br><span class="line"><span class="keyword">print</span> c.fetchone()</span><br><span class="line"></span><br><span class="line"><span class="comment"># Larger example that inserts many records at a timestamp</span></span><br><span class="line">purchases = [(<span class="string">'2016-06-01'</span>, <span class="string">'BUY'</span>, <span class="string">'IBM'</span>, <span class="number">100</span>, <span class="number">45.00</span>),</span><br><span class="line">             (<span class="string">'2016-06-01'</span>, <span class="string">'BUY'</span>, <span class="string">'GOOG'</span>, <span class="number">100</span>, <span class="number">450.00</span>),</span><br><span class="line">            ]</span><br><span class="line">c.executemany(<span class="string">'INSERT INTO stocks VALUES (?,?,?,?,?)'</span>, purchases)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Treat the cursor as an iterator，or fetchall()</span></span><br><span class="line"><span class="keyword">for</span> row <span class="keyword">in</span> c.execute(<span class="string">'SELECT * FROM stocks ORDER BY price'</span>):</span><br><span class="line">    <span class="keyword">print</span> row</span><br></pre></td></tr></table></figure>
+<h3 id="在Flask中使用SQLite"><a href="#在Flask中使用SQLite" class="headerlink" title="在Flask中使用SQLite"></a>在Flask中使用SQLite</h3><p>参考：<a href="http://flask.pocoo.org/docs/0.11/patterns/sqlite3/" target="_blank" rel="external">Flask-Docs/sqlite3</a></p>
+<ul>
+<li>Simple Example</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> g</span><br><span class="line"></span><br><span class="line">DATABASE = <span class="string">'/path/to/database.db'</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_db</span><span class="params">()</span>:</span></span><br><span class="line">    db = getattr(g, <span class="string">'_database'</span>, <span class="keyword">None</span>)</span><br><span class="line">    <span class="keyword">if</span> db <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">        db = g._database = sqlite3.connect(DATABASE)</span><br><span class="line">        db.row_factory = sqlite3.Row</span><br><span class="line">    <span class="keyword">return</span> db</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.teardown_appcontext</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">close_connection</span><span class="params">(exception)</span>:</span></span><br><span class="line">    db = getattr(g, <span class="string">'_database'</span>, <span class="keyword">None</span>)</span><br><span class="line">    <span class="keyword">if</span> db <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</span><br><span class="line">        db.close()</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route('/')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span><span class="params">()</span>:</span></span><br><span class="line">    cur = get_db().cursor()</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> app.app_context():</span><br><span class="line">    <span class="comment"># now you can use get_db()</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>Easy Querying</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">query_db</span><span class="params">(query, args=<span class="params">()</span>, one=False)</span>:</span></span><br><span class="line">    cur = get_db().execute(query, args)</span><br><span class="line">    rv = cur.fetchall()</span><br><span class="line">    <span class="keyword">return</span> (rv[<span class="number">0</span>] <span class="keyword">if</span> rv <span class="keyword">else</span> <span class="keyword">None</span>) <span class="keyword">if</span> one <span class="keyword">else</span> rv</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> user <span class="keyword">in</span> query_db(<span class="string">'select * from users'</span>):</span><br><span class="line">    <span class="keyword">print</span> user[<span class="string">'username'</span>], <span class="string">'has the id'</span>, user[<span class="string">'user_id'</span>]</span><br><span class="line"></span><br><span class="line">user = query_db(<span class="string">'select * from users where username = ?'</span>,</span><br><span class="line">        [the_username], one=<span class="keyword">True</span>)</span><br><span class="line"><span class="keyword">if</span> user <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'No such user'</span></span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="keyword">print</span> the_username, <span class="string">'has the id'</span>, user[<span class="string">'user_id'</span>]</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Initial Schemas</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">init_db</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">with</span> app.app_context():</span><br><span class="line">        db = get_db()</span><br><span class="line">        <span class="keyword">with</span> app.open_resource(<span class="string">'schema.sql'</span>, mode=<span class="string">'r'</span>) <span class="keyword">as</span> f:</span><br><span class="line">            db.cursor().executescript(f.read())</span><br><span class="line">        db.commit()</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; from yourapplication import init_db</span><br><span class="line">&gt;&gt;&gt; init_db()</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.cli.command('initdb')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">initdb_command</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="string">"""Creates the database tables."""</span></span><br><span class="line">    init_db()</span><br><span class="line">    print(<span class="string">'Initialized the database.'</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="SQL语句"><a href="#SQL语句" class="headerlink" title="SQL语句"></a>SQL语句</h3><p>参考：<a href="https://github.com/pallets/flask/blob/master/examples/minitwit/minitwit.py" target="_blank" rel="external">flask example</a></p>
+<ul>
+<li>schema</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">drop</span> <span class="keyword">table</span> <span class="keyword">if</span> <span class="keyword">exists</span> message;</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> message (</span><br><span class="line">  message_id <span class="built_in">integer</span> primary <span class="keyword">key</span> autoincrement,</span><br><span class="line">  author_id <span class="built_in">integer</span> <span class="keyword">not</span> <span class="literal">null</span>,</span><br><span class="line">  <span class="built_in">text</span> <span class="built_in">text</span> <span class="keyword">not</span> <span class="literal">null</span>,</span><br><span class="line">  pub_date <span class="built_in">integer</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>select</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">messages=query_db(<span class="string">'''</span><br><span class="line">    select message.*, user.* from message, user</span><br><span class="line">    where message.author_id = user.user_id and (</span><br><span class="line">        user.user_id = ? or</span><br><span class="line">        user.user_id in (select whom_id from follower</span><br><span class="line">                                where who_id = ?))</span><br><span class="line">    order by message.pub_date desc limit ?'''</span>,</span><br><span class="line">    [session[<span class="string">'user_id'</span>], session[<span class="string">'user_id'</span>], PER_PAGE])</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">followed = query_db(<span class="string">'''select 1 from follower where</span><br><span class="line">    follower.who_id = ? and follower.whom_id = ?'''</span>,</span><br><span class="line">    [session[<span class="string">'user_id'</span>], profile_user[<span class="string">'user_id'</span>]],</span><br><span class="line">    one=<span class="keyword">True</span>)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>insert</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">db.execute(<span class="string">'insert into follower (who_id, whom_id) values (?, ?)'</span>,</span><br><span class="line">    [session[<span class="string">'user_id'</span>], whom_id])</span><br><span class="line">db.commit()</span><br></pre></td></tr></table></figure>
+<ul>
+<li>delete</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">db.execute(<span class="string">'delete from follower where who_id=? and whom_id=?'</span>,</span><br><span class="line">    [session[<span class="string">'user_id'</span>], whom_id])</span><br><span class="line">db.commit()</span><br></pre></td></tr></table></figure>
+<ul>
+<li>update</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">db.execute(<span class="string">'update message set text=? where message_id=?'</span>,</span><br><span class="line">    [new_text, message_id])</span><br><span class="line">db.commit()</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2016/06/27/sqlite-cheatsheet/" data-id="cipy40u2m00079z2rfcvflst9" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sqlite/">sqlite</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2016/06/26/how-to-travel/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">关于旅行的一些想法</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2016/06/27/tutorial-miniweibo/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">利用Flask创建一个mini微博</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+
+
+        </div>
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+          
+  <div class="sidebar-module sidebar-module-inset">
+  <h4>About</h4>
+  <p>淡定，耐心，积累。创造完整的作品。 编程100小时的挑战，旨在一个月内(2016/6/23开始),用100小时提高编程水平。 目标-行动-记录-改进。</p>
+
+</div>
+
+
+  
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/100挑战/">100挑战</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/Flask/">Flask</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlite/">sqlite</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/思考/">思考</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/记录/">记录</a><span class="sidebar-module-list-count">1</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/100挑战/" style="font-size: 10px;">100挑战</a> <a href="/tags/Flask/" style="font-size: 10px;">Flask</a> <a href="/tags/flask/" style="font-size: 10px;">flask</a> <a href="/tags/sqlite/" style="font-size: 10px;">sqlite</a> <a href="/tags/思考/" style="font-size: 10px;">思考</a> <a href="/tags/记录/" style="font-size: 10px;">记录</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/06/">June 2016</a><span class="sidebar-module-list-count">8</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2016/06/27/tutorial-miniweibo/">利用Flask创建一个mini微博</a>
+        </li>
+      
+        <li>
+          <a href="/2016/06/27/sqlite-cheatsheet/">SQLite Cheatsheet</a>
+        </li>
+      
+        <li>
+          <a href="/2016/06/26/how-to-travel/">关于旅行的一些想法</a>
+        </li>
+      
+        <li>
+          <a href="/2016/06/24/flask-app-pattern/">Flask Web应用的一般模式</a>
+        </li>
+      
+        <li>
+          <a href="/2016/06/23/flask-first-view/">Flask简介</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Yibin<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+  
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js" integrity="sha384-8gBf6Y4YYq7Jx97PIqmTwLPin4hxIzQw5aDmUg/DDhul9fFpbbLcLh3nTIIDJKhx" crossorigin="anonymous"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>
