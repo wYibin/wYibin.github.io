@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>利用Flask创建一个mini微博(2) | 日課書</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="利用Flask创建一个mini微博(1)
+Step 3：创建视图函数用户登录首页时会进行判断，如果是登录用户则显示，用户关注的时间线，如果没登录则显示公共的时间线。
+在首页会有登录登出的选项，这个具体的选项会根据目前用户状态进行判断。如果是未登录则点击进入登录页面，登录成功后返回用户关注的时间线。如果用户已登录，则显示登出，登出后返回公共时间线。
+如果是未登录状态，首页还会有注册选项。点击进入注册">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用Flask创建一个mini微博(2)">
+<meta property="og:url" content="http://yoursite.com/2016/06/28/tutorial-miniweibo-2/index.html">
+<meta property="og:site_name" content="日課書">
+<meta property="og:description" content="利用Flask创建一个mini微博(1)
+Step 3：创建视图函数用户登录首页时会进行判断，如果是登录用户则显示，用户关注的时间线，如果没登录则显示公共的时间线。
+在首页会有登录登出的选项，这个具体的选项会根据目前用户状态进行判断。如果是未登录则点击进入登录页面，登录成功后返回用户关注的时间线。如果用户已登录，则显示登出，登出后返回公共时间线。
+如果是未登录状态，首页还会有注册选项。点击进入注册">
+<meta property="og:updated_time" content="2016-06-28T13:35:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="利用Flask创建一个mini微博(2)">
+<meta name="twitter:description" content="利用Flask创建一个mini微博(1)
+Step 3：创建视图函数用户登录首页时会进行判断，如果是登录用户则显示，用户关注的时间线，如果没登录则显示公共的时间线。
+在首页会有登录登出的选项，这个具体的选项会根据目前用户状态进行判断。如果是未登录则点击进入登录页面，登录成功后返回用户关注的时间线。如果用户已登录，则显示登出，登出后返回公共时间线。
+如果是未登录状态，首页还会有注册选项。点击进入注册">
+  
+    <link rel="alternate" href="/atom.xml" title="日課書" type="application/atom+xml">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+          <li><a href="/atom.xml" title="RSS Feed"><i class="fa fa-rss"></i></a></li>
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">日課書</h1>
+  
+    <p class="lead blog-description">编程100小时挑战</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-8 blog-main">
+          <article id="post-tutorial-miniweibo-2" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      利用Flask创建一个mini微博(2)
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2016/06/28/tutorial-miniweibo-2/" class="article-date"><time datetime="2016-06-28T13:35:31.000Z" itemprop="datePublished">2016-06-28</time></a>
+</div>
+
+    
+    
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="https://wyibin.github.io/2016/06/27/tutorial-miniweibo/" target="_blank" rel="external">利用Flask创建一个mini微博(1)</a></p>
+<h2 id="Step-3：创建视图函数"><a href="#Step-3：创建视图函数" class="headerlink" title="Step 3：创建视图函数"></a>Step 3：创建视图函数</h2><p>用户登录首页时会进行判断，如果是登录用户则显示，用户关注的时间线，如果没登录则显示公共的时间线。</p>
+<p>在首页会有登录登出的选项，这个具体的选项会根据目前用户状态进行判断。如果是未登录则点击进入登录页面，登录成功后返回用户关注的时间线。如果用户已登录，则显示登出，登出后返回公共时间线。</p>
+<p>如果是未登录状态，首页还会有注册选项。点击进入注册页面，注册成功后跳转至登录页面。</p>
+<p>其次登录用户还可以进入特定的其他用户界面，以浏览某用户的全部微博。在用户的个人界面，可以选择关注或者取消关注某用户。并且可以查看该用户的关注列表。</p>
+<p>通过分析，我们得知在整个网站中需要用到一下链接和对应的视图函数：</p>
+<ul>
+<li>首页。</li>
+</ul>
+<p>当用户进入首页时判断用户是否登录，如果登录则显示个人的时间线，以显示自己和关注人的消息。否则重定向到公开时间线。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> session, render_template, redirect, url_for</span><br><span class="line"></span><br><span class="line">PER_PAGE = <span class="number">20</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route('/')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">timeline</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> g.user:</span><br><span class="line">        <span class="keyword">return</span> redirect(url_for(<span class="string">'public_timeline'</span>))</span><br><span class="line">    query = <span class="string">'''</span><br><span class="line">        SELECT messages.*, users.* FROM messages, users</span><br><span class="line">        WHERE messages.user_id = users.user_id AND (</span><br><span class="line">            users.user_id = ? OR</span><br><span class="line">            users.user_id IN (SELECT followed_id FROM follows</span><br><span class="line">                WHERE follower_id = ?))</span><br><span class="line">        ORDER BY messages.pub_time DESC LIMIT ?'''</span></span><br><span class="line">    messages = query_db(query, [session[<span class="string">'user_id'</span>], session[<span class="string">'user_id'</span>], PER_PAGE])</span><br><span class="line">    <span class="keyword">return</span>  render_template(<span class="string">'timeline.html'</span>, messages=messages)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>公共主页</li>
+</ul>
+<p>公共时间线显示最近发布的若干条信息。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route('/public')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">public_timeline</span><span class="params">()</span>:</span></span><br><span class="line">    query = <span class="string">'''</span><br><span class="line">        SELECT messages.*, users.* FROM messages, users</span><br><span class="line">        WHERE messages.user_id = users.user_id</span><br><span class="line">        ORDER BY messages.pub_time DESC LIMIT ?'''</span></span><br><span class="line">    messages = query_db(query, [PER_PAGE])</span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">'timeline.html'</span>, messages=messages)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>用户页</li>
+</ul>
+<p>用户页用以显示单个用户发布的所有消息。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> abort</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route('/&lt;username&gt;')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">user_timeline</span><span class="params">(username)</span>:</span></span><br><span class="line">    profile_user = query_db(<span class="string">'SELECT * FROM user WHERE user_name = ?'</span>,</span><br><span class="line">        [username], one=<span class="keyword">True</span>)</span><br><span class="line">    <span class="keyword">if</span> profile_user <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">        abort(<span class="number">404</span>)</span><br><span class="line">    followed = <span class="keyword">False</span></span><br><span class="line">    <span class="keyword">if</span> g.user:</span><br><span class="line">        followed = query_db(<span class="string">'''SELECT 1 FROM follows WHERE</span><br><span class="line">            follows.follower_id = ? AND follows.followed_id = ?'''</span>,</span><br><span class="line">            [session[<span class="string">'user_id'</span>], profile_user[<span class="string">'user_id'</span>]],</span><br><span class="line">            one=<span class="keyword">True</span>) <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span></span><br><span class="line">    query = <span class="string">'''</span><br><span class="line">        SELECT messages.*, users.* FROM messages, users</span><br><span class="line">        WHERE users.user_id = message.user_id AND users.user_id = ?</span><br><span class="line">        ORDER BY messages.pub_time DESC LIMIT ?'''</span></span><br><span class="line">    messages = query_db(query, [profile_user[user_id], PER_PAGE])</span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">'timeline.html'</span>, messages=messages,</span><br><span class="line">        followed=followed, profile_user=profile_user)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>关注</li>
+</ul>
+<p>关注用户，就是在关注表中添加一条记录，关注人为当前登录用户，被关注者为浏览的用户。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> flash</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route('/&lt;username&gt;/follow')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">follow</span><span class="params">(username)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> g.user:</span><br><span class="line">        abort(<span class="number">401</span>)</span><br><span class="line">    followed_id = get_user_id(username)</span><br><span class="line">    <span class="keyword">if</span> followed_id <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">        abort(<span class="number">404</span>)</span><br><span class="line">    db = get_db()</span><br><span class="line">    db.execute(<span class="string">'''INSERT INTO follows (follower_id, followed_id)</span><br><span class="line">        VALUES (?, ?)'''</span>, [session[<span class="string">'user_id'</span>], followed_id])</span><br><span class="line">    db.commit()</span><br><span class="line">    flash(<span class="string">'Your are now following "%s".'</span> % username)</span><br><span class="line">    <span class="keyword">return</span> redirect(url_for(<span class="string">'user_timeline'</span>, username=username))</span><br></pre></td></tr></table></figure>
+<ul>
+<li>取消关注</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route('/&lt;username&gt;/unfollow')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">unfollow</span><span class="params">(username)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> g.user:</span><br><span class="line">        abort(<span class="number">401</span>)</span><br><span class="line">    followed_id = get_user_id(username)</span><br><span class="line">    <span class="keyword">if</span> followed_id <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">        abort(<span class="number">404</span>)</span><br><span class="line">    db = get_db()</span><br><span class="line">    db.execute(<span class="string">'DELETE FROM follows WHERE follower_id=? AND followed_id=?'</span>,</span><br><span class="line">        [session[<span class="string">'user_id'</span>], followed_id])</span><br><span class="line">    db.commit()</span><br><span class="line">    flash(<span class="string">'You are no longer following "%s".'</span> % username)</span><br><span class="line">    <span class="keyword">return</span> redirect(url_for(<span class="string">'user_timeline'</span>, username=username))</span><br></pre></td></tr></table></figure>
+<ul>
+<li>发布消息</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> request</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route('/add_message', methods=['POST'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add_message</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> g.user:</span><br><span class="line">        abort(<span class="number">401</span>)</span><br><span class="line">    <span class="keyword">if</span> request.form[<span class="string">'text'</span>]:</span><br><span class="line">        db = get_db()</span><br><span class="line">        db.execute(<span class="string">'''INSERT INTO messages (user_id, text, pub_time)</span><br><span class="line">            VALUES (?, ?, ?)'''</span>, [session[<span class="string">'user_id'</span>], request.form[<span class="string">'text'</span>],</span><br><span class="line">            int(time.time())])</span><br><span class="line">        db.commit()</span><br><span class="line">        flash(<span class="string">'Your message was recorded.'</span>)</span><br><span class="line">    <span class="keyword">return</span> redirect(url_for(<span class="string">'timeline'</span>))</span><br></pre></td></tr></table></figure>
+<ul>
+<li>注册</li>
+</ul>
+<p>注册时，首先要检查用户的提交的信息是否完整，其次检查是否重名。为了安全起见，我们用werkzeug库提供的函数，对密码进行哈希处理，避免在数据库中明文存储密码。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> werkzeug <span class="keyword">import</span> generate_password_hash</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route('/register')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">register</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">if</span> g.user:</span><br><span class="line">        <span class="keyword">return</span> redirect(url_for(<span class="string">'timeline'</span>))</span><br><span class="line">    error = <span class="keyword">None</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'POST'</span>:</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> request.form[<span class="string">'username'</span>]:</span><br><span class="line">            error = <span class="string">'You have to enter a username'</span></span><br><span class="line">        <span class="keyword">elif</span> <span class="keyword">not</span> request.form[<span class="string">'email'</span>] <span class="keyword">or</span> \</span><br><span class="line">                <span class="string">'@'</span> <span class="keyword">not</span> <span class="keyword">in</span> request.form[<span class="string">'email'</span>]:</span><br><span class="line">            error = <span class="string">'You have to enter a valid emial address'</span></span><br><span class="line">        <span class="keyword">elif</span> <span class="keyword">not</span> request.form[<span class="string">'password'</span>]:</span><br><span class="line">            error = <span class="string">'You have to enter a password'</span></span><br><span class="line">        <span class="keyword">elif</span> request.form[<span class="string">'password'</span>] != request.form[<span class="string">'password2'</span>]:</span><br><span class="line">            error = <span class="string">'The two password do not match'</span></span><br><span class="line">        <span class="keyword">elif</span> get_user_id(request.form[<span class="string">'username'</span>]) <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</span><br><span class="line">            error = <span class="string">'The username is already taken'</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            db = get_db()</span><br><span class="line">            db.execute(<span class="string">'''INSERT INTO users (user_name, email, pw_hash) VALUES</span><br><span class="line">                (?, ?, ?)'''</span>, [request.form[<span class="string">'username'</span>], request.form[<span class="string">'email'</span>], generate_password_hash(request.form[<span class="string">'password'</span>])])</span><br><span class="line">            db.commit()</span><br><span class="line">            flakh(<span class="string">'You were successfully registered and can login now'</span>)</span><br><span class="line">            <span class="keyword">return</span> redirect(url_for(<span class="string">'login'</span>))</span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">'register.html'</span>, error=error)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>登录</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> werkzeug <span class="keyword">import</span> check_password_hash</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route('/login', methods=['GET', 'POST'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">login</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">if</span> g.user:</span><br><span class="line">        <span class="keyword">return</span> redirect(url_for(<span class="string">'timeline'</span>))</span><br><span class="line">    error = <span class="keyword">None</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'POST'</span>:</span><br><span class="line">        user = query_db(<span class="string">'''SELECT * FROM users WHERE user_name=?'''</span>,</span><br><span class="line">            [request.form[<span class="string">'username'</span>]], one=<span class="keyword">True</span>)</span><br><span class="line">        <span class="keyword">if</span> user <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">            error = <span class="string">'Invalid username'</span></span><br><span class="line">        <span class="keyword">elif</span> <span class="keyword">not</span> check_password_hash(user[<span class="string">'pw_hash'</span>], request.form[<span class="string">'password'</span>]):</span><br><span class="line">            error = <span class="string">'Invalid password'</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            flash(<span class="string">'You were logged in.'</span>)</span><br><span class="line">            session[<span class="string">'user_id'</span>] = user[<span class="string">'user_id'</span>]</span><br><span class="line">            <span class="keyword">return</span> redirect(url_for(<span class="string">'timeline'</span>))</span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">'login.html'</span>, error=error)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>登出</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route('/logout')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">logout</span><span class="params">()</span>:</span></span><br><span class="line">    flash(<span class="string">'You were logged out'</span>)</span><br><span class="line">    session.pop(<span class="string">'user_id'</span>, <span class="keyword">None</span>)</span><br><span class="line">    <span class="keyword">return</span> redirect(url_for(<span class="string">'public_timeline'</span>))</span><br></pre></td></tr></table></figure>
+<ul>
+<li>查看关注列表</li>
+</ul>
+<p>通过关注列表，用户可以获取与自己有关的关注信息，包括自己关注的人，和关注自己的人。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route('/follow_list')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">follow_list</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> g.user:</span><br><span class="line">        abort(<span class="number">401</span>)</span><br><span class="line">    followed = query_db(<span class="string">'SELECT * FROM follows WHERE follower_id=?'</span>,</span><br><span class="line">        [session[<span class="string">'user_id'</span>]])</span><br><span class="line">    follower = query_db(<span class="string">'SELECT * FROM follows WHERE followed_id=?'</span>,</span><br><span class="line">        [session[<span class="string">'user_id'</span>]])</span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">'follow_list.html'</span>, followed=followed, follower=follower)</span><br></pre></td></tr></table></figure>
+<p><em>待续</em></p>
+<hr>
+<h2 id="Step-4：制作模板"><a href="#Step-4：制作模板" class="headerlink" title="Step 4：制作模板"></a>Step 4：制作模板</h2><h2 id="Step-5：测试程序"><a href="#Step-5：测试程序" class="headerlink" title="Step 5：测试程序"></a>Step 5：测试程序</h2><h2 id="Step-6-部署程序"><a href="#Step-6-部署程序" class="headerlink" title="Step 6: 部署程序"></a>Step 6: 部署程序</h2>
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2016/06/28/tutorial-miniweibo-2/" data-id="cipzhykfb000dmr2reo8z5oy3" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flask/">Flask</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2016/06/27/tutorial-miniweibo/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">利用Flask创建一个mini微博</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2016/06/28/jinja-template-cheatsheet/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">Jinja Cheat Sheet</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+
+
+        </div>
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+          
+  <div class="sidebar-module sidebar-module-inset">
+  <h4>About</h4>
+  <p>淡定，耐心，积累。创造完整的作品。 编程100小时的挑战，旨在一个月内(2016/6/23开始),用100小时提高编程水平。 目标-行动-记录-改进。</p>
+
+</div>
+
+
+  
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/100挑战/">100挑战</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/CheatSheet/">CheatSheet</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/Flask/">Flask</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/Jinja/">Jinja</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlite/">sqlite</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/思考/">思考</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/记录/">记录</a><span class="sidebar-module-list-count">1</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/100挑战/" style="font-size: 10px;">100挑战</a> <a href="/tags/CheatSheet/" style="font-size: 10px;">CheatSheet</a> <a href="/tags/Flask/" style="font-size: 20px;">Flask</a> <a href="/tags/Jinja/" style="font-size: 10px;">Jinja</a> <a href="/tags/flask/" style="font-size: 10px;">flask</a> <a href="/tags/sqlite/" style="font-size: 10px;">sqlite</a> <a href="/tags/思考/" style="font-size: 10px;">思考</a> <a href="/tags/记录/" style="font-size: 10px;">记录</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/06/">June 2016</a><span class="sidebar-module-list-count">10</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2016/06/28/jinja-template-cheatsheet/">Jinja Cheat Sheet</a>
+        </li>
+      
+        <li>
+          <a href="/2016/06/28/tutorial-miniweibo-2/">利用Flask创建一个mini微博(2)</a>
+        </li>
+      
+        <li>
+          <a href="/2016/06/27/tutorial-miniweibo/">利用Flask创建一个mini微博</a>
+        </li>
+      
+        <li>
+          <a href="/2016/06/27/sqlite-cheatsheet/">SQLite Cheatsheet</a>
+        </li>
+      
+        <li>
+          <a href="/2016/06/26/how-to-travel/">关于旅行的一些想法</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Yibin<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+  
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js" integrity="sha384-8gBf6Y4YYq7Jx97PIqmTwLPin4hxIzQw5aDmUg/DDhul9fFpbbLcLh3nTIIDJKhx" crossorigin="anonymous"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>
