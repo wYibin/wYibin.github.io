@@ -80,6 +80,160 @@
         <div class="col-sm-8 blog-main">
           
   
+    <article id="post-tutorial-miniweibo-4" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/06/30/tutorial-miniweibo-4/">利用Flask创建一个mini微博(4)</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2016/06/30/tutorial-miniweibo-4/" class="article-date"><time datetime="2016-06-30T14:25:31.000Z" itemprop="datePublished">2016-06-30</time></a>
+</div>
+
+    
+    
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="https://wyibin.github.io/2016/06/27/tutorial-miniweibo/" target="_blank" rel="external">利用Flask创建一个mini微博(1)</a><br><a href="https://wyibin.github.io/2016/06/28/tutorial-miniweibo-2/" target="_blank" rel="external">利用Flask创建一个mini微博(2)</a><br><a href="https://wyibin.github.io/2016/06/29/tutorial-miniweibo-3/" target="_blank" rel="external">利用Flask创建一个mini微博(3)</a></p>
+<h2 id="Step-5：测试程序"><a href="#Step-5：测试程序" class="headerlink" title="Step 5：测试程序"></a>Step 5：测试程序</h2><p>参考：<br><a href="http://flask.pocoo.org/docs/0.11/testing/" target="_blank" rel="external">Flask/Docs/Testing Flask Application</a><br><a href="https://github.com/wYibin/flask/blob/master/examples/minitwit/test_minitwit.py" target="_blank" rel="external">minitwit/test</a></p>
+<p>没有经过测试的程序，在后续的修改和添加功能时很难处理。如果一个程序有自动测试，你就可以放心的秀敢程序，然后通过运行测试就知道新的修改对原有功能有没有影响。</p>
+<p>Flask提供了一个测试客户端来处理应用上下文的问题。有了它你就可以使用你自己的测试方案了。这里我们将使用Python标准库unittest模块进行测试。</p>
+<h4 id="测试框架"><a href="#测试框架" class="headerlink" title="测试框架"></a>测试框架</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># miniweibo_tests.py</span></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> miniweibo</span><br><span class="line"><span class="keyword">import</span> unittest</span><br><span class="line"><span class="keyword">import</span> tempfile</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FlaskTestCase</span><span class="params">(unittest.TestCase)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">setUp</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.db_fd, miniweibo.app.config[<span class="string">'DATABASE'</span>] = tempfile.mkstemp()</span><br><span class="line">        miniweibo.app.config[<span class="string">'TESTING'</span>] = <span class="keyword">True</span></span><br><span class="line">        self.app = miniweibo.app.test_client()</span><br><span class="line">        <span class="keyword">with</span> miniweibo.app.app_context():</span><br><span class="line">            miniweibo.init_db()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">tearDown</span><span class="params">(self)</span>:</span></span><br><span class="line">        os.close(self.db_fd)</span><br><span class="line">        os.unlink(miniweibo.app.config[<span class="string">'DATABASE'</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    unittest.main()</span><br></pre></td></tr></table></figure>
+<p>tempfile.makstemp()随机生成一个文件，返回文件操作实例和文件名。设置TESTING变量后，程序就不会捕捉请求时发生的错误，以便最后一起输出测试结果。在测试开始初始化数据库。测试完后关闭数据库并删除临时文件。</p>
+<p>为了测试时方便调用，在测试实例前编写一些辅助函数。比如我们要测试注册的功能，首先编写注册的辅助函数，然后在测试注册时出现的各种可能性。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">register</span><span class="params">(self, username, password, password2=None, email=None)</span>:</span></span><br><span class="line">    <span class="string">"""Helper function to register a user"""</span></span><br><span class="line">    <span class="keyword">if</span> password2 <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">        password2 = password</span><br><span class="line">    <span class="keyword">if</span> email <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">        email = username + <span class="string">'@example.com'</span></span><br><span class="line">    <span class="keyword">return</span> self.app.post(<span class="string">'/register'</span>, data=&#123;</span><br><span class="line">        <span class="string">'username'</span>: username,</span><br><span class="line">        <span class="string">'password'</span>: password,</span><br><span class="line">        <span class="string">'password2'</span>: password2,</span><br><span class="line">        <span class="string">'email'</span>: email</span><br><span class="line">    &#125;, follow_redirects=<span class="keyword">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test_register</span><span class="params">(self)</span>:</span></span><br><span class="line">    <span class="string">"""Make sure registering works"""</span></span><br><span class="line">    rv = self.register(<span class="string">'user1'</span>, <span class="string">'default'</span>)</span><br><span class="line">    <span class="keyword">assert</span> <span class="string">'You were successfully registered and can login now'</span> <span class="keyword">in</span> rv.data</span><br><span class="line">    rv = self.register(<span class="string">'user1'</span>, <span class="string">'default'</span>)</span><br><span class="line">    <span class="keyword">assert</span> <span class="string">'The username is already taken'</span> <span class="keyword">in</span> rv.data</span><br><span class="line">    rv = self.register(<span class="string">''</span>, <span class="string">'default'</span>)</span><br><span class="line">    <span class="keyword">assert</span> <span class="string">'You have to enter a username'</span> <span class="keyword">in</span> rv.data</span><br><span class="line">    rv = self.register(<span class="string">'meh'</span>, <span class="string">''</span>)</span><br><span class="line">    <span class="keyword">assert</span> <span class="string">'You have to enter a password'</span> <span class="keyword">in</span> rv.data</span><br><span class="line">    rv = self.register(<span class="string">'meh'</span>, <span class="string">'x'</span>, <span class="string">'y'</span>)</span><br><span class="line">    <span class="keyword">assert</span> <span class="string">'The two password do not match'</span> <span class="keyword">in</span> rv.data</span><br><span class="line">    rv = self.register(<span class="string">'meh'</span>, <span class="string">'foo'</span>, email=<span class="string">'broken'</span>)</span><br><span class="line">    <span class="keyword">assert</span> <span class="string">'You have to enter a valid email address'</span> <span class="keyword">in</span> rv.data</span><br></pre></td></tr></table></figure>
+<p>接下来测试登录、登出功能：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">login</span><span class="params">(self, username, password)</span>:</span></span><br><span class="line">    <span class="string">"""Helper function to sign in"""</span></span><br><span class="line">    <span class="keyword">return</span> self.app.post(<span class="string">'/login'</span>, data=&#123;</span><br><span class="line">        <span class="string">'username'</span>: username,</span><br><span class="line">        <span class="string">'password'</span>: password,</span><br><span class="line">    &#125;, follow_redirects=<span class="keyword">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">register_and_login</span><span class="params">(self, username, password)</span>:</span></span><br><span class="line">    <span class="string">"""Register an account then login"""</span></span><br><span class="line">    self.register(username, password)</span><br><span class="line">    <span class="keyword">return</span> self.ogin(username, password)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">logout</span><span class="params">(self)</span>:</span></span><br><span class="line">    <span class="string">"""Helper function to logout"""</span></span><br><span class="line">    <span class="keyword">return</span> self.app.get(<span class="string">'/logout'</span>, follow_redirects=<span class="keyword">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test_login_logout</span><span class="params">(self)</span>:</span></span><br><span class="line">    <span class="string">"""Make sure logging in and logging out works"""</span></span><br><span class="line">    rv = self.register_and_login(<span class="string">'user1'</span>, <span class="string">'default'</span>)</span><br><span class="line">    <span class="keyword">assert</span> <span class="string">'You were logged in'</span> <span class="keyword">in</span> rv.data</span><br><span class="line">    rv = self.logout()</span><br><span class="line">    <span class="keyword">assert</span> <span class="string">'You were logged out'</span> <span class="keyword">in</span> rv.data</span><br><span class="line">    rv = self.login(<span class="string">'user1'</span>, <span class="string">'wrongpassword'</span>)</span><br><span class="line">    <span class="keyword">assert</span> <span class="string">'Invalid password'</span> <span class="keyword">in</span> rv.data</span><br><span class="line">    rv = self.login(<span class="string">'user2'</span>, <span class="string">'default'</span>)</span><br><span class="line">    <span class="keyword">assert</span> <span class="string">'Invalid username'</span> <span class="keyword">in</span> rv.data</span><br></pre></td></tr></table></figure></p>
+<p>测试发表微博功能：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add_message</span><span class="params">(self, text)</span>:</span></span><br><span class="line">    <span class="string">"""Helper function to add a message"""</span></span><br><span class="line">    rv = self.app.post(<span class="string">'/add_message'</span>, data=&#123;<span class="string">'text'</span>: text&#125;,</span><br><span class="line">        follow_redirects=<span class="keyword">True</span>)</span><br><span class="line">    <span class="keyword">return</span> rv</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test_add_message</span><span class="params">(self)</span>:</span></span><br><span class="line">    <span class="string">"""Check if adding messages works"""</span></span><br><span class="line">    self.register_and_login(<span class="string">'foo'</span>, <span class="string">'default'</span>)</span><br><span class="line">    rv = self.add_message(<span class="string">'test message 1'</span>)</span><br><span class="line">    <span class="keyword">assert</span> <span class="string">'test message 1'</span> <span class="keyword">in</span> rv.data</span><br></pre></td></tr></table></figure></p>
+<p>测试时间线和关注功能<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test_timelines</span><span class="params">(self)</span>:</span></span><br><span class="line">    <span class="string">"""Make sure that timelines work"""</span></span><br><span class="line">    self.register_and_login(<span class="string">'foo'</span>, <span class="string">'default'</span>)</span><br><span class="line">    self.add_message(<span class="string">'the message by foo'</span>)</span><br><span class="line">    self.logout()</span><br><span class="line">    self.register_and_login(<span class="string">'bar'</span>, <span class="string">'default'</span>)</span><br><span class="line">    self.add_message(<span class="string">'the message by bar'</span>)</span><br><span class="line">    rv = self.app.get(<span class="string">'/public'</span>)</span><br><span class="line">    <span class="keyword">assert</span> <span class="string">'the message by foo'</span> <span class="keyword">in</span> rv.data</span><br><span class="line">    <span class="keyword">assert</span> <span class="string">'the message by bar'</span> <span class="keyword">in</span> rv.data</span><br><span class="line"></span><br><span class="line">    <span class="comment"># test bar's timeline</span></span><br><span class="line">    rv = self.app.get(<span class="string">'/'</span>)</span><br><span class="line">    <span class="keyword">assert</span> <span class="string">'the message by foo'</span> <span class="keyword">not</span> <span class="keyword">in</span> rv.data</span><br><span class="line">    <span class="keyword">assert</span> <span class="string">'the message by bar'</span> <span class="keyword">in</span> rv.data</span><br><span class="line"></span><br><span class="line">    <span class="comment"># test follow function</span></span><br><span class="line">    rv = self.app.get(<span class="string">'/foo/follow'</span>, follow_redirects=<span class="keyword">True</span>)</span><br><span class="line">    <span class="keyword">assert</span> <span class="string">'You are now following &amp;#34;foo&amp;#34;'</span> <span class="keyword">in</span> rv.data</span><br><span class="line"></span><br><span class="line">    rv = self.app.get(<span class="string">'/'</span>)</span><br><span class="line">    <span class="keyword">assert</span> <span class="string">'the message by foo'</span> <span class="keyword">in</span> rv.data</span><br><span class="line">    <span class="keyword">assert</span> <span class="string">'the message by bar'</span> <span class="keyword">in</span> rv.data</span><br><span class="line"></span><br><span class="line">    <span class="comment"># test the user timeline</span></span><br><span class="line">    rv = self.app.get(<span class="string">'/bar'</span>)</span><br><span class="line">    <span class="keyword">assert</span> <span class="string">'the message by foo'</span> <span class="keyword">not</span> <span class="keyword">in</span> rv.data</span><br><span class="line">    <span class="keyword">assert</span> <span class="string">'the message by bar'</span> <span class="keyword">in</span> rv.data</span><br><span class="line">    rv = self.app.get(<span class="string">'/foo'</span>)</span><br><span class="line">    <span class="keyword">assert</span> <span class="string">'the message by foo'</span> <span class="keyword">in</span> rv.data</span><br><span class="line">    <span class="keyword">assert</span> <span class="string">'the message by bar'</span> <span class="keyword">not</span> <span class="keyword">in</span> rv.data</span><br><span class="line"></span><br><span class="line">    <span class="comment"># test unfollow function</span></span><br><span class="line">    rv = self.app.get(<span class="string">'/foo/unfollow'</span>, follow_redirects=<span class="keyword">True</span>)</span><br><span class="line">    <span class="keyword">assert</span> <span class="string">'You are no longer following &amp;#34;foo&amp;#34;'</span> <span class="keyword">in</span> rv.data</span><br><span class="line">    rv = self.app.get(<span class="string">'/'</span>)</span><br><span class="line">    <span class="keyword">assert</span> <span class="string">'the message by foo'</span> <span class="keyword">not</span> <span class="keyword">in</span> rv.data</span><br><span class="line">    <span class="keyword">assert</span> <span class="string">'the message by bar'</span> <span class="keyword">in</span> rv.data</span><br></pre></td></tr></table></figure></p>
+<h2 id="Step-6-部署程序"><a href="#Step-6-部署程序" class="headerlink" title="Step 6: 部署程序"></a>Step 6: 部署程序</h2><p>Web app在经过测试后，就可以部署上线了，以便用户通过互联网进行访问。下面我们将使用Heroku来部署我们的MiniWeibo。</p>
+<ol>
+<li>安装、注册Heroku</li>
+</ol>
+<p>首先下载安装Heroku Toolbelt。然后注册一个免费的账号。在终端中登录：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ heroku login</span><br></pre></td></tr></table></figure></p>
+<ol>
+<li>配置部署文件</li>
+</ol>
+<p>尽管Flask为我们提供了内置的wsgi服务器，但是在实际生产环境中，我们需要更换一个生产环境可用的服务器。我们选择gunicorn。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ pip install gunicorn</span><br></pre></td></tr></table></figure>
+<p>接下来我们设置部署需要的Procfile文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">web gunicorn miniweibo:app</span><br></pre></td></tr></table></figure></p>
+<p>除了Procfile文件，还要自动创建一个Python依赖包文件。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip freeze &gt; requirements.text</span><br></pre></td></tr></table></figure></p>
+<ol>
+<li>利用git提交所有修改</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git add -A</span><br><span class="line">$ git commit -m <span class="string">"Add files for deploying at Heroku"</span></span><br></pre></td></tr></table></figure>
+<ol>
+<li>创建Heroku App并提交部署</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ heroku create miniweibo</span><br><span class="line">$ git push heroku master</span><br></pre></td></tr></table></figure>
+<p>在完成部署后，Heroku会给出已部署的web应用的地址。<br>接下来我们在浏览器中输入<code>mini-weibo.herokuapp.com</code>就可以访问我们的MiniWeibo啦！</p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2016/06/30/tutorial-miniweibo-4/" data-id="ciq2eleob000o3x2rdhl4nhy8" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flask/">Flask</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tutorial/">tutorial</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-flask-ajax" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/06/30/flask-ajax/">AJAX with jQuery in Flask</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2016/06/30/flask-ajax/" class="article-date"><time datetime="2016-06-30T14:24:07.000Z" itemprop="datePublished">2016-06-30</time></a>
+</div>
+
+    
+    
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <ol>
+<li>Loading jQuery</li>
+</ol>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">text/javascript</span> <span class="attr">src</span>=<span class="string">"&#123;&#123;</span><br><span class="line">  url_for('static', filename='jquery.js') &#125;&#125;"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>or<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="xml">window.jQuery || document.write('<span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"&#123;&#123;url_for('static', filename='jquery.js') &#125;&#125;"</span>&gt;</span><span class="undefined">\x3C/script&gt;')</span></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<ol>
+<li>Get URL Root</li>
+</ol>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">text/javascript</span>&gt;</span><span class="undefined"></span><br><span class="line">  $SCRIPT_ROOT = &#123;&#123; request.script_root|tojson|safe &#125;&#125;;</span><br><span class="line"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ol>
+<li>JSON View Functions</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, jsonify, render_template, request</span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route('/_add_numbers')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add_numbers</span><span class="params">()</span>:</span></span><br><span class="line">    a = request.args.get(<span class="string">'a'</span>, <span class="number">0</span>, type=int)</span><br><span class="line">    b = request.args.get(<span class="string">'b'</span>, <span class="number">0</span>, type=int)</span><br><span class="line">    <span class="keyword">return</span> jsonify(result=a + b)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route('/')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">'index.html'</span>)</span><br></pre></td></tr></table></figure>
+<ol>
+<li>The HTML</li>
+</ol>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">text/javascript</span>&gt;</span><span class="undefined"></span><br><span class="line">  $(function() &#123;</span><br><span class="line">    $('a#calculate').bind('click', function() &#123;</span><br><span class="line">      $.getJSON($SCRIPT_ROOT + '/_add_numbers', &#123;</span><br><span class="line">        a: $('input[name="a"]').val(),</span><br><span class="line">        b: $('input[name="b"]').val()</span><br><span class="line">      &#125;, function(data) &#123;</span><br><span class="line">        $("#result").text(data.result);</span><br><span class="line">      &#125;);</span><br><span class="line">      return false;</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;);</span><br><span class="line"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>jQuery Example<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">text</span> <span class="attr">size</span>=<span class="string">5</span> <span class="attr">name</span>=<span class="string">a</span>&gt;</span> +</span><br><span class="line">   <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">text</span> <span class="attr">size</span>=<span class="string">5</span> <span class="attr">name</span>=<span class="string">b</span>&gt;</span> =</span><br><span class="line">   <span class="tag">&lt;<span class="name">span</span> <span class="attr">id</span>=<span class="string">result</span>&gt;</span>?<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">#</span> <span class="attr">id</span>=<span class="string">calculate</span>&gt;</span>calculate server side<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><a href="http://flask.pocoo.org/docs/0.11/patterns/jquery/" target="_blank" rel="external">Flask/Docs/AJAX with jQuery</a></p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2016/06/30/flask-ajax/" data-id="ciq2eleni00043x2relhfepcq" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AJAX/">AJAX</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flask/">Flask</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-bootstrap-cheatsheet" class="article article-type-post" itemscope itemprop="blogPost">
 
   <header class="article-header">
@@ -118,7 +272,7 @@
     
 
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/06/29/bootstrap-cheatsheet/" data-id="ciq0yrmcd0001hj2r3h8yihr1" class="article-share-link">
+      <a data-url="http://yoursite.com/2016/06/29/bootstrap-cheatsheet/" data-id="ciq2elenc00013x2r5dni3l18" class="article-share-link">
         <i class="fa fa-share"></i> Share
       </a>
       
@@ -173,7 +327,7 @@
     
 
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/06/29/tutorial-miniweibo-3/" data-id="ciq0yrmd3000ghj2r0ppdiw2d" class="article-share-link">
+      <a data-url="http://yoursite.com/2016/06/29/tutorial-miniweibo-3/" data-id="ciq2eleo8000j3x2r8k7vyczf" class="article-share-link">
         <i class="fa fa-share"></i> Share
       </a>
       
@@ -263,7 +417,7 @@
     
 
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/06/28/jinja-template-cheatsheet/" data-id="ciq0yrmcw000bhj2rbbofqf03" class="article-share-link">
+      <a data-url="http://yoursite.com/2016/06/28/jinja-template-cheatsheet/" data-id="ciq2eleo9000l3x2r1va3zizk" class="article-share-link">
         <i class="fa fa-share"></i> Share
       </a>
       
@@ -373,7 +527,7 @@
     
 
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/06/28/tutorial-miniweibo-2/" data-id="ciq0yrmd8000khj2rn6x0gt7x" class="article-share-link">
+      <a data-url="http://yoursite.com/2016/06/28/tutorial-miniweibo-2/" data-id="ciq2eleo2000e3x2r0mg5ha9o" class="article-share-link">
         <i class="fa fa-share"></i> Share
       </a>
       
@@ -482,7 +636,7 @@
     
 
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/06/27/tutorial-miniweibo/" data-id="ciq0yrmd6000ihj2rkvmlv2ww" class="article-share-link">
+      <a data-url="http://yoursite.com/2016/06/27/tutorial-miniweibo/" data-id="ciq2eleo4000g3x2rw2hqb4ae" class="article-share-link">
         <i class="fa fa-share"></i> Share
       </a>
       
@@ -574,7 +728,7 @@
     
 
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/06/27/sqlite-cheatsheet/" data-id="ciq0yrmd0000dhj2rpq2li92p" class="article-share-link">
+      <a data-url="http://yoursite.com/2016/06/27/sqlite-cheatsheet/" data-id="ciq2elenn00083x2r9wd5q0y8" class="article-share-link">
         <i class="fa fa-share"></i> Share
       </a>
       
@@ -661,7 +815,7 @@
     
 
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/06/26/how-to-travel/" data-id="ciq0yrmcq0008hj2raq858ygx" class="article-share-link">
+      <a data-url="http://yoursite.com/2016/06/26/how-to-travel/" data-id="ciq2elenz000c3x2rnufjly1o" class="article-share-link">
         <i class="fa fa-share"></i> Share
       </a>
       
@@ -731,198 +885,11 @@
     
 
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/06/24/flask-app-pattern/" data-id="ciq0yrmch0003hj2r8pxniecc" class="article-share-link">
+      <a data-url="http://yoursite.com/2016/06/24/flask-app-pattern/" data-id="ciq2eleng00033x2rurov3j3r" class="article-share-link">
         <i class="fa fa-share"></i> Share
       </a>
       
       
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-flask-first-view" class="article article-type-post" itemscope itemprop="blogPost">
-
-  <header class="article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/06/23/flask-first-view/">Flask简介</a>
-    </h1>
-  
-
-
-  </header>
-
-  <div class="article-meta">
-    <div class="article-datetime">
-  <a href="/2016/06/23/flask-first-view/" class="article-date"><time datetime="2016-06-23T14:44:12.000Z" itemprop="datePublished">2016-06-23</time></a>
-</div>
-
-    
-    
-
-  </div>
-  <div class="article-inner">
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Flask是一个Python的小型Web程序框架，它基于Wekzeug和Jinja 2两个库，有很好的可扩展性。选择学习Flask就是基于他简洁和可扩展的特性。</p>
-<p>Web应用的本质是，客户端向服务器发送请求，服务器读取请求内容，返回给客户端相应的数据。如果是静态网站，譬如Hexo博客，客户端输入地址，服务器直接返回静态的HTML页面即可，服务器程序并没有其他任务。但对于动态网站，服务器程序会根据请求的不同，对HTML页面进行相应的加工，返回不同内容的页面。</p>
-<p>对应这种特质，一个Web程序，就是响应不同HTTP请求的函数。使用Web框架后，我们在编写Web应用，就是编写对应URL处理函数。</p>
-<p>在Flask中URL与处理函数的对应，用<code>@app.route（）</code>装饰器实现。route同时能识别不同的HTTP请求类型。</p>
-<p>Flask返回页面，可以用<code>render_template()</code>来渲染Jinja模板。</p>
-<p>同时HTTP请求中也可能包含客户端上传的数据，用<code>request</code>即可获得。同样利用<code>request</code>还可以获得Cookie数据。</p>
-<p>通过<code>redirect()</code>我们可以重定向用户的请求，以达到权限控制的目的。同时用<code>@app.errorhandler()</code>来返回个性化的错误提醒页面。</p>
-<p>利用<code>make_response()</code>可以设置响应的内容，状态码，头部信息等。</p>
-<p>利用<code>Session</code>可以设置干安全的Cookie。</p>
-<p>在网站的交互中，可以利用<code>flash()</code>发出反馈实时信息，模板中可以利用<code>get_flashed_messages()</code>来获得反馈信息。</p>
-<p>服务器程序可以使用<code>app.logger</code>来记录日志内容。</p>
-<p>参考内容：</p>
-<ul>
-<li><a href="http://flask.pocoo.org/docs/0.11/quickstart/" target="_blank" rel="external">Flask Document/Quickstart</a></li>
-<li><a href="http://www.liaoxuefeng.com/wiki/001374738125095c955c1e6d8bb493182103fac9270762a000/001386832689740b04430a98f614b6da89da2157ea3efe2000" target="_blank" rel="external">廖雪峰Python教程-WSGI接口</a></li>
-<li><a href="http://www.liaoxuefeng.com/wiki/001374738125095c955c1e6d8bb493182103fac9270762a000/001386832704232d6fb5df42dd34a7890fa6254351faac7000" target="_blank" rel="external">廖雪峰Python教程-使用Web框架</a></li>
-</ul>
-
-      
-    </div>
-
-    
-      
-
-    
-
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/06/23/flask-first-view/" data-id="ciq0yrmcl0006hj2rvt5e9iyr" class="article-share-link">
-        <i class="fa fa-share"></i> Share
-      </a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/flask/">flask</a></li></ul>
-
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-time-log" class="article article-type-post" itemscope itemprop="blogPost">
-
-  <header class="article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/06/23/time-log/">进度记录: day07 | +9H | [36/100]</a>
-    </h1>
-  
-
-
-  </header>
-
-  <div class="article-meta">
-    <div class="article-datetime">
-  <a href="/2016/06/23/time-log/" class="article-date"><time datetime="2016-06-23T14:42:28.000Z" itemprop="datePublished">2016-06-23</time></a>
-</div>
-
-    
-    
-
-  </div>
-  <div class="article-inner">
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="day07，2016-06-29，-9H，第26-34小时"><a href="#day07，2016-06-29，-9H，第26-34小时" class="headerlink" title="day07，2016-06-29，+9H，第26-34小时"></a>day07，2016-06-29，+9H，第26-34小时</h3><ul>
-<li>26-27H，Bootstrap Cheat Sheet(1)</li>
-<li>28-31H，MiniWeibo教程 Templates</li>
-<li>32-33H，Bootstrap Cheat Sheet(2)</li>
-<li>34H，MiniWeibo教程 测试<br>-<h3 id="day06-2016-06-28-4H-第22-25小时"><a href="#day06-2016-06-28-4H-第22-25小时" class="headerlink" title="day06, 2016-06-28, +4H, 第22-25小时"></a>day06, 2016-06-28, +4H, 第22-25小时</h3></li>
-<li>22-24H，编写miniweibo 教程：视图函数</li>
-<li>25H，编写Jinja Cheat Sheet</li>
-</ul>
-<h3 id="day05-2016-06-27-8H-第14-21小时"><a href="#day05-2016-06-27-8H-第14-21小时" class="headerlink" title="day05, 2016-06-27, +8H, 第14-21小时"></a>day05, 2016-06-27, +8H, 第14-21小时</h3><ul>
-<li>14-15H，浏览Python文档及Flask文档中关于SQLite的部分</li>
-<li>16H，查看minitwit源码，编写SQLite-Cheatsheet</li>
-<li>17-19H，编写miniweibo tutorial前三章：简介、功能分析、开发环境设置</li>
-<li>20-21H，编写miniweibo tutorial第四章：数据库。</li>
-</ul>
-<h3 id="day04-2016-06-26-0H"><a href="#day04-2016-06-26-0H" class="headerlink" title="day04, 2016-06-26, +0H"></a>day04, 2016-06-26, +0H</h3><h3 id="day03-2016-06-25-2H-第12-13小时"><a href="#day03-2016-06-25-2H-第12-13小时" class="headerlink" title="day03, 2016-06-25, +2H, 第12-13小时"></a>day03, 2016-06-25, +2H, 第12-13小时</h3><ul>
-<li>12H, minitwit源码阅读</li>
-<li>13H, 浏览《Flask web开发》前5章</li>
-</ul>
-<h3 id="day02-2016-06-24-7H，第5-11小时"><a href="#day02-2016-06-24-7H，第5-11小时" class="headerlink" title="day02, 2016-06-24, +7H，第5-11小时"></a>day02, 2016-06-24, +7H，第5-11小时</h3><ul>
-<li>5-7H，Flask文档：Tutorial，并实现Flaskr示例</li>
-<li>8H，Flask文档，学习Flaskr的测试方法</li>
-<li>9-10H，部署Flaskr到Heroku</li>
-<li>11H, 浏览Flask源码的minitwit实例，写一篇博客总结</li>
-</ul>
-<h3 id="day01，2016-06-23，-4H，第1-4小时"><a href="#day01，2016-06-23，-4H，第1-4小时" class="headerlink" title="day01，2016-06-23，+4H，第1-4小时"></a>day01，2016-06-23，+4H，第1-4小时</h3><ul>
-<li>1H，制定100小时编程挑战计划</li>
-<li>2H，创建GitHub项目，实现Flask-hello-world</li>
-<li>3-4H，浏览Flask文档：QuickStart部分</li>
-</ul>
-<h3 id="day02-计划-2016-06-24"><a href="#day02-计划-2016-06-24" class="headerlink" title="day02[计划], 2016-06-24"></a>day02[计划], 2016-06-24</h3><ul>
-<li>[X] 5-7H，Flask文档：Tutorial，并实现示例</li>
-<li>[X] 8H, 部署实现示例到Heroku</li>
-<li>[ ] 9-10H, 浏览其他几个代码范例</li>
-<li>[ ] 11-12H，浏览书籍《Flask Web开发》第一部分</li>
-</ul>
-<h3 id="day03-计划-2016-06-25"><a href="#day03-计划-2016-06-25" class="headerlink" title="day03[计划], 2016-06-25"></a>day03[计划], 2016-06-25</h3><ul>
-<li>[ ] 12-13H，浏览书籍《Flask Web开发》第一部分</li>
-<li>[ ] 14-16H，编写minitwit的tutorial</li>
-</ul>
-<h3 id="day04-计划-，2016-06-26"><a href="#day04-计划-，2016-06-26" class="headerlink" title="day04[计划]，2016-06-26"></a>day04[计划]，2016-06-26</h3><ul>
-<li>[ ] 14H, 编写Flask cheatsheet: sqlite\</li>
-</ul>
-<h3 id="day05-计划-，2016-06-27"><a href="#day05-计划-，2016-06-27" class="headerlink" title="day05[计划]，2016-06-27"></a>day05[计划]，2016-06-27</h3><ul>
-<li>[x] 14H, CheatSheet - SQLite for Flask</li>
-<li>[ ] 15-16H, 阅读《Flask Web开发》第一部分，编写CheatSheet</li>
-<li>[x] 17-19H, 编写minitwit tutorial教程</li>
-<li>[ ] 20-21H, 完成我的博客0.1版，MVP最小可行产品。</li>
-</ul>
-<h3 id="day06-计划-，2016-06-28"><a href="#day06-计划-，2016-06-28" class="headerlink" title="day06[计划]，2016-06-28"></a>day06[计划]，2016-06-28</h3><ul>
-<li>[x] 22-23H, miniweibo教程编写：视图函数。</li>
-<li>[ ] 24H，Flask-cheatsheet: view function。</li>
-<li>[ ] 25H，Flask-Bootstrap Cheatsheet。</li>
-<li>[ ] 26-27H，miniweibo教程编写：模板。</li>
-<li>[ ] 28-29H，测试</li>
-</ul>
-<h3 id="day07-计划-，2016-06-29"><a href="#day07-计划-，2016-06-29" class="headerlink" title="day07[计划]，2016-06-29"></a>day07[计划]，2016-06-29</h3><ul>
-<li>[x] 26H，Bootstrap Cheatsheet。</li>
-<li>[x] 27-28H，miniweibo教程编写：模板。</li>
-<li>[ ] 29-31H，测试</li>
-</ul>
-<h3 id="day08-计划-，2016-06-30"><a href="#day08-计划-，2016-06-30" class="headerlink" title="day08[计划]，2016-06-30"></a>day08[计划]，2016-06-30</h3><ul>
-<li>[ ] 35-36H，MiniWeibo教程：测试。</li>
-<li>[ ] 37-38H，MiniWeibo教程：部署。</li>
-<li>[ ] 39H，Flask表单扩展。</li>
-<li>[ ] 40H，Flask邮件和认证扩展。</li>
-</ul>
-
-      
-    </div>
-
-    
-      
-
-    
-
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/06/23/time-log/" data-id="ciq0yrmd2000fhj2r05fnjicj" class="article-share-link">
-        <i class="fa fa-share"></i> Share
-      </a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/记录/">记录</a></li></ul>
-
 
     </footer>
   </div>
@@ -956,7 +923,7 @@
   
   <div class="sidebar-module">
     <h4>Tags</h4>
-    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/100挑战/">100挑战</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/CheatSheet/">CheatSheet</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/Flask/">Flask</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/Jinja/">Jinja</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/bootstrap/">bootstrap</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cheatsheet/">cheatsheet</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlite/">sqlite</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tutorial/">tutorial</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/思考/">思考</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/记录/">记录</a><span class="sidebar-module-list-count">1</span></li></ul>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/100挑战/">100挑战</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/AJAX/">AJAX</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/CheatSheet/">CheatSheet</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/Flask/">Flask</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/Jinja/">Jinja</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/bootstrap/">bootstrap</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cheatsheet/">cheatsheet</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlite/">sqlite</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tutorial/">tutorial</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/思考/">思考</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/记录/">记录</a><span class="sidebar-module-list-count">1</span></li></ul>
   </div>
 
 
@@ -965,7 +932,7 @@
   <div class="sidebar-module">
     <h4>Tag Cloud</h4>
     <p class="tagcloud">
-      <a href="/tags/100挑战/" style="font-size: 10px;">100挑战</a> <a href="/tags/CheatSheet/" style="font-size: 10px;">CheatSheet</a> <a href="/tags/Flask/" style="font-size: 20px;">Flask</a> <a href="/tags/Jinja/" style="font-size: 10px;">Jinja</a> <a href="/tags/bootstrap/" style="font-size: 10px;">bootstrap</a> <a href="/tags/cheatsheet/" style="font-size: 10px;">cheatsheet</a> <a href="/tags/flask/" style="font-size: 10px;">flask</a> <a href="/tags/sqlite/" style="font-size: 10px;">sqlite</a> <a href="/tags/tutorial/" style="font-size: 10px;">tutorial</a> <a href="/tags/思考/" style="font-size: 10px;">思考</a> <a href="/tags/记录/" style="font-size: 10px;">记录</a>
+      <a href="/tags/100挑战/" style="font-size: 10px;">100挑战</a> <a href="/tags/AJAX/" style="font-size: 10px;">AJAX</a> <a href="/tags/CheatSheet/" style="font-size: 10px;">CheatSheet</a> <a href="/tags/Flask/" style="font-size: 20px;">Flask</a> <a href="/tags/Jinja/" style="font-size: 10px;">Jinja</a> <a href="/tags/bootstrap/" style="font-size: 10px;">bootstrap</a> <a href="/tags/cheatsheet/" style="font-size: 10px;">cheatsheet</a> <a href="/tags/flask/" style="font-size: 10px;">flask</a> <a href="/tags/sqlite/" style="font-size: 10px;">sqlite</a> <a href="/tags/tutorial/" style="font-size: 15px;">tutorial</a> <a href="/tags/思考/" style="font-size: 10px;">思考</a> <a href="/tags/记录/" style="font-size: 10px;">记录</a>
     </p>
   </div>
 
@@ -973,7 +940,7 @@
   
   <div class="sidebar-module">
     <h4>Archives</h4>
-    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/06/">June 2016</a><span class="sidebar-module-list-count">12</span></li></ul>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/06/">June 2016</a><span class="sidebar-module-list-count">14</span></li></ul>
   </div>
 
 
@@ -982,6 +949,14 @@
   <div class="sidebar-module">
     <h4>Recents</h4>
     <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2016/06/30/tutorial-miniweibo-4/">利用Flask创建一个mini微博(4)</a>
+        </li>
+      
+        <li>
+          <a href="/2016/06/30/flask-ajax/">AJAX with jQuery in Flask</a>
+        </li>
       
         <li>
           <a href="/2016/06/29/bootstrap-cheatsheet/">Bootstrap - Cheat Sheet</a>
@@ -993,14 +968,6 @@
       
         <li>
           <a href="/2016/06/28/jinja-template-cheatsheet/">Jinja Cheat Sheet</a>
-        </li>
-      
-        <li>
-          <a href="/2016/06/28/tutorial-miniweibo-2/">利用Flask创建一个mini微博(2)</a>
-        </li>
-      
-        <li>
-          <a href="/2016/06/27/tutorial-miniweibo/">利用Flask创建一个mini微博</a>
         </li>
       
     </ul>
