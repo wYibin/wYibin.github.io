@@ -80,6 +80,244 @@
         <div class="col-sm-8 blog-main">
           
   
+    <article id="post-flask-app-structure" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/07/01/flask-app-structure/">Flask程序结构</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2016/07/01/flask-app-structure/" class="article-date"><time datetime="2016-07-01T13:45:23.000Z" itemprop="datePublished">2016-07-01</time></a>
+</div>
+
+    
+    
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在编写小型Web程序时我们可以使用单一文件，但是当程序较复杂是，这种结构会导致很多问题。当我们在开发Flask Web程序时，可以使用包和模块组织源码。</p>
+<h2 id="1-项目结构"><a href="#1-项目结构" class="headerlink" title="1. 项目结构"></a>1. 项目结构</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">|- myproject</span><br><span class="line">    |- app/</span><br><span class="line">        |- template/</span><br><span class="line">        |- static/</span><br><span class="line">        |- main/</span><br><span class="line">            |- __init__.py</span><br><span class="line">            |- errors.py</span><br><span class="line">            |- forms.py</span><br><span class="line">            |- views.py</span><br><span class="line">        |- __init__.py</span><br><span class="line">        |- email.py</span><br><span class="line">        |- models.py</span><br><span class="line">    |- migrations/</span><br><span class="line">    |- tests/</span><br><span class="line">        |- __init__.py</span><br><span class="line">        |- test*.py</span><br><span class="line">    |- venv/</span><br><span class="line">    |- requirements.txt</span><br><span class="line">    |- config.py</span><br><span class="line">    |- manage.py</span><br></pre></td></tr></table></figure>
+<h2 id="2-配置选项"><a href="#2-配置选项" class="headerlink" title="2. 配置选项"></a>2. 配置选项</h2><p>使用配置文件，为开发、测试和生产环境进行不同的设置。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line">basedir = os.path.abspath(os.path.dirname(__file__))</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Config</span>:</span></span><br><span class="line">    SECRET_KEY = os.environ.get(<span class="string">'SECRET_KEY'</span>) <span class="keyword">or</span> <span class="string">'hard to guess string'</span></span><br><span class="line">    SQLALCHEMY_COMMIT_ON_TEARDOWN = <span class="keyword">True</span></span><br><span class="line">    GRITY_MAIL_SUBJECT_PREFIX = <span class="string">'[Grity]'</span></span><br><span class="line">    GRITY_MAIL_SENDER = <span class="string">'Grity Admin &lt;grity@example.com&gt;'</span></span><br><span class="line">    GRITY_ADMIN = os.environ.get(<span class="string">'GRITY_ADMIN'</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">init_app</span><span class="params">(app)</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DevelopmentConfig</span><span class="params">(Config)</span>:</span></span><br><span class="line">    DEBUG = <span class="keyword">True</span></span><br><span class="line">    MAIL_SERVER = <span class="string">'smtp.googlemail.com'</span></span><br><span class="line">    MAIL_PORT = <span class="number">587</span></span><br><span class="line">    MAIL_USE_TLS = <span class="keyword">True</span></span><br><span class="line">    MAIL_USERNAME = os.environ.get(<span class="string">'MAIL_USERNAME'</span>)</span><br><span class="line">    MAIL_PASSWORD = os.environ.get(<span class="string">'MAIL_PASSWORD'</span>)</span><br><span class="line">    SQLALCHEMY_DATABASE_URI = os.environ.get(<span class="string">'DEV_DATABASE_URL'</span>) <span class="keyword">or</span> \</span><br><span class="line">        <span class="string">'sqlite:///'</span> + os.path.join(basedir, <span class="string">'data-dev.sqlite'</span>)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestingConfig</span><span class="params">(Config)</span>:</span></span><br><span class="line">    TESTING = <span class="keyword">True</span></span><br><span class="line">    SQLALCHEMY_DATABASE_URI = os.environ.get(<span class="string">'TEST_DATABASE_URL'</span>) <span class="keyword">or</span> \</span><br><span class="line">        <span class="string">'sqlite:///'</span> + os.path.join(basedir, <span class="string">'data-test.sqlite'</span>)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ProductionConfig</span><span class="params">(Config)</span>:</span></span><br><span class="line">    SQLALCHEMY_DATABASE_URI = os.environ.get(<span class="string">'DATABASE_URL'</span>) <span class="keyword">or</span> \</span><br><span class="line">        <span class="string">'sqlite:///'</span> + os.path.join(basedir, <span class="string">'data.sqlte'</span>)</span><br><span class="line"></span><br><span class="line">config = &#123;</span><br><span class="line">    <span class="string">'development'</span>: DevelopmentConfig,</span><br><span class="line">    <span class="string">'testing'</span>: TestingConfig,</span><br><span class="line">    <span class="string">'production'</span>: ProductionConfig,</span><br><span class="line"></span><br><span class="line">    <span class="string">'default'</span>: DevelopmentConfig</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="3-程序包"><a href="#3-程序包" class="headerlink" title="3. 程序包"></a>3. 程序包</h2><ul>
+<li>使用程序工厂函数</li>
+</ul>
+<p>使用单文件开发的Flask应用，其程序在全局作用域中创建，所以无法动态修改配置文件。运行脚本时，程序实例已经创建了。为了提高测试覆盖度，必须在不同的配置环境中运行程序，所以必须延迟创建程序实例，把程序创建过程移到可显式调用的工厂函数中。使用这种方法还可可以创建多个程序实例。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># app/__init__.py</span></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask</span><br><span class="line"><span class="keyword">from</span> flask_bootstrap <span class="keyword">import</span> Bootstrap</span><br><span class="line"><span class="keyword">from</span> flask_sqlalchemy <span class="keyword">import</span> SQLAlchemy</span><br><span class="line"><span class="keyword">from</span> config <span class="keyword">import</span> config</span><br><span class="line"></span><br><span class="line">bootstrap = Bootstrap()</span><br><span class="line">db = SQLAlchemy()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_app</span><span class="params">(config_name)</span>:</span></span><br><span class="line">    app = Flask(__name__)</span><br><span class="line">    app.config.from_object(config.[config_name])</span><br><span class="line">    config[config_name].init_app(app)</span><br><span class="line"></span><br><span class="line">    bootstrap.init_app(app)</span><br><span class="line">    db.init_app(app)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># add routes and errorhandlers</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> app</span><br></pre></td></tr></table></figure>
+<ul>
+<li>在Blueprint中实现程序功能</li>
+</ul>
+<p>Blueprint包的构造文件</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># app/main/__init__.py</span></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Blueprint</span><br><span class="line"></span><br><span class="line">main = Blueprint(<span class="string">'main'</span>, __name__)</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> . <span class="keyword">import</span> views, errors</span><br></pre></td></tr></table></figure>
+<p>把Blueprint注册到程序上</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># app/__init__.py</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_app</span><span class="params">(config_name)</span>:</span></span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line">    <span class="keyword">from</span> .mian <span class="keyword">import</span> main <span class="keyword">as</span> main_blueprint</span><br><span class="line">    app.register_blueprint(main_blueprint)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> app</span><br></pre></td></tr></table></figure>
+<p>Blueprint中的错误处理程序</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># app/mian/errors.py</span></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> render_template</span><br><span class="line"><span class="keyword">from</span> . <span class="keyword">import</span> main</span><br><span class="line"></span><br><span class="line"><span class="meta">@main.app_errorhandler(404)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">page_not_found</span><span class="params">(e)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">'404.html'</span>), <span class="number">404</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@main.app_errorhandler(500)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">internal_server_error</span><span class="params">(e)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">'500.html'</span>), <span class="number">500</span></span><br></pre></td></tr></table></figure>
+<p>Blueprint中的路由定义</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># app/main/views.py</span></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> render_template, session, redirect, url_for</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> . <span class="keyword">import</span> main</span><br><span class="line"><span class="keyword">from</span> .forms <span class="keyword">import</span> NameForm</span><br><span class="line"><span class="keyword">from</span> .. <span class="keyword">import</span> db</span><br><span class="line"><span class="keyword">from</span> ..models <span class="keyword">import</span> User</span><br><span class="line"></span><br><span class="line"><span class="meta">@main.route('/', methods=['GET', 'POST'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span><span class="params">()</span>:</span></span><br><span class="line">    form = NameForm()</span><br><span class="line">    <span class="keyword">if</span> form.validate_on_submit():</span><br><span class="line">        <span class="comment"># ...</span></span><br><span class="line">        <span class="keyword">return</span> redirect(url_for(<span class="string">'.index'</span>))</span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">'index.html'</span>, form=form, name=session.get(<span class="string">'name'</span>),</span><br><span class="line">        known=session.get(<span class="string">'known'</span>, <span class="keyword">False</span>))</span><br></pre></td></tr></table></figure>
+<h2 id="4-启动脚本"><a href="#4-启动脚本" class="headerlink" title="4. 启动脚本"></a>4. 启动脚本</h2><p>顶级文件夹中的manage.py文件用于启动程序</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> app <span class="keyword">import</span> create_app, db</span><br><span class="line"><span class="keyword">from</span> app.models <span class="keyword">import</span> User, Role</span><br><span class="line"><span class="keyword">from</span> flask.ext.script <span class="keyword">import</span> Manager, Shell</span><br><span class="line"><span class="keyword">from</span> flask.ext.migrate <span class="keyword">import</span> Migrate, MigrateCommand</span><br><span class="line"></span><br><span class="line">app = create_app(os.getenv(<span class="string">'FLASK_CONFIG'</span>) <span class="keyword">or</span> <span class="string">'default'</span>)</span><br><span class="line">manager = Manager(app)</span><br><span class="line">migrate = Migrate(app, db)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">make_shell_context</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> dict(app=app, db=db, User=User, Role=Role)</span><br><span class="line">manager.add_command(<span class="string">"shell"</span>, Shell(make_context=make_shell_context))</span><br><span class="line">manager.add_command(<span class="string">'db'</span>, MigrateCommand)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    manager.run()</span><br></pre></td></tr></table></figure>
+<h2 id="5-需求文件"><a href="#5-需求文件" class="headerlink" title="5. 需求文件"></a>5. 需求文件</h2><p>程序中需要包含一个requirements.txt文件，用于记录所有依赖包及其版本号。这样就可以在另外一台电脑上重新生成虚拟环境。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(venv) $ pip freeze &gt; requirements.txt</span><br></pre></td></tr></table></figure>
+<p>如要创建这个虚拟环境的副本，运行如下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(venv) $ pip install -r requirements.txt</span><br></pre></td></tr></table></figure>
+<h2 id="6-单元测试"><a href="#6-单元测试" class="headerlink" title="6. 单元测试"></a>6. 单元测试</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> unittest</span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> current_app</span><br><span class="line"><span class="keyword">from</span> app <span class="keyword">import</span> create_app, db</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BasicsTestCase</span><span class="params">(unittest.TestCase)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">setUp</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.app = create_app(<span class="string">'testing'</span>)</span><br><span class="line">        self.app_context = self.app.app_context()</span><br><span class="line">        self.app_context.push()</span><br><span class="line">        db.create_all()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">tearDown</span><span class="params">(self)</span>:</span></span><br><span class="line">        db.session.remove()</span><br><span class="line">        db.drop_all()</span><br><span class="line">        self.app_context.pop()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">test_app_exists</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.assertFalse(current_app <span class="keyword">is</span> <span class="keyword">None</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">test_app_is_testing</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.assertTrue(current_app.config[<span class="string">'TESTING'</span>])</span><br></pre></td></tr></table></figure>
+<p>在manage.py脚本中添加test自定义命令</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@manager.command</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">import</span> unittest</span><br><span class="line">    tests = unittest.TestLoader().discover(<span class="string">'tests'</span>)</span><br><span class="line">    unittest.TextTestRunner(verbosity=<span class="number">2</span>).run(tests)</span><br></pre></td></tr></table></figure>
+<h2 id="7-创建数据库"><a href="#7-创建数据库" class="headerlink" title="7. 创建数据库"></a>7. 创建数据库</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ python manage.py db init</span><br><span class="line"></span><br><span class="line">$ python manage.py db migrate -m <span class="string">"initial migrate"</span></span><br><span class="line"></span><br><span class="line">$ python manage.py db upgrade</span><br><span class="line"><span class="comment"># downgrade</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2016/07/01/flask-app-structure/" data-id="ciq3ssewb0008zt2r7vs92cbg" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flask/">Flask</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-flask-patterns-sqlalchemy" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/07/01/flask-patterns-sqlalchemy/">Flask中使用SQLAlchemy</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2016/07/01/flask-patterns-sqlalchemy/" class="article-date"><time datetime="2016-07-01T13:45:12.000Z" itemprop="datePublished">2016-07-01</time></a>
+</div>
+
+    
+    
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在Web程序中一般采用数据库来保存数据，需要时再向数据库发出查询或者修改。使用的数据库一般为关系型数据库。关系型数据库把数据存储在表中，表模拟程序中不同«»的实体。表的列定义了实体的数据属性，而行则是实体的各条数据项。表和表之间的行可以通过外键进行连接。在Flask中，我们可以才用关系型数据框架SQLAlchemy来作为ORM提升开发效率。</p>
+<h2 id="1-配置数据库"><a href="#1-配置数据库" class="headerlink" title="1. 配置数据库"></a>1. 配置数据库</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask_sqlalchemy <span class="keyword">import</span> SQLAlchemy</span><br><span class="line"></span><br><span class="line">basedir = os.path.abspath(os.path.dirname(__file__))</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line">app.config[<span class="string">'SQLALCHEMY_DATABASE_URI'</span>] = \</span><br><span class="line">    <span class="string">'sqlite:///'</span> + os.path.join(basedir, <span class="string">'data.sqlite'</span>)</span><br><span class="line">app.config[<span class="string">'SQLALCHEMY_COMMIT_ON_TEARDOWN'</span>] = <span class="keyword">True</span></span><br><span class="line"></span><br><span class="line">db = SQLAlchemy(app)</span><br></pre></td></tr></table></figure>
+<h2 id="2-定义模型"><a href="#2-定义模型" class="headerlink" title="2. 定义模型"></a>2. 定义模型</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Role</span><span class="params">(db.Model)</span>:</span></span><br><span class="line">    __tablename__ = <span class="string">'roles'</span></span><br><span class="line">    id = db.Column(db.Integer, primary_key=<span class="keyword">True</span>)</span><br><span class="line">    name = db.Column(db.String(<span class="number">64</span>), unique=<span class="keyword">True</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__repr__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">'&lt;Role %r&gt;'</span> % self.name</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">User</span><span class="params">(db.Model)</span>:</span></span><br><span class="line">    __tablename__ = <span class="string">'users'</span></span><br><span class="line">    id = db.Column(db.Integer, primary_key=<span class="keyword">True</span>)</span><br><span class="line">    username = db.Column(db.String(<span class="number">64</span>), unique=<span class="keyword">True</span>, index=<span class="keyword">True</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__repr__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">'&lt;User %r&gt;'</span> % self.username</span><br></pre></td></tr></table></figure>
+<h2 id="3-关系"><a href="#3-关系" class="headerlink" title="3. 关系"></a>3. 关系</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Role</span><span class="params">(db.Model)</span>:</span></span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line">    users = db.relationship(<span class="string">'User'</span>, backref=<span class="string">'role'</span>)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">User</span><span class="params">(db.Model)</span>:</span></span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line">    role_id = db.Column(db.Integer, db.ForeignKey(<span class="string">'roles.id'</span>))</span><br></pre></td></tr></table></figure>
+<h2 id="4-数据库操作"><a href="#4-数据库操作" class="headerlink" title="4. 数据库操作"></a>4. 数据库操作</h2><ul>
+<li>创建表</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ python hello.py shell</span><br><span class="line">&gt;&gt;&gt; from hello import db</span><br><span class="line">&gt;&gt;&gt; db.drop_all()</span><br><span class="line">&gt;&gt;&gt; db.create_all()</span><br></pre></td></tr></table></figure>
+<ul>
+<li>插入行</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; from hello import Role, User</span><br><span class="line">&gt;&gt;&gt; admin_role = Role(name=<span class="string">'Admin'</span>)</span><br><span class="line">&gt;&gt;&gt; mod_role = Role(name=<span class="string">'Moderator'</span>)</span><br><span class="line">&gt;&gt;&gt; user_role = Role(name=<span class="string">'User'</span>)</span><br><span class="line">&gt;&gt;&gt; user_john = User(username=<span class="string">'john'</span>, role=admin_role)</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; db.session.add_all([admin_role, mod_role, user_role, user_john])</span><br><span class="line">&gt;&gt;&gt; db.session.commit()</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; db.session.rollback()</span><br></pre></td></tr></table></figure>
+<ul>
+<li>修改行</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; admin_role = <span class="string">'Administrator'</span></span><br><span class="line">&gt;&gt;&gt; db.session.add(admin_role)</span><br><span class="line">&gt;&gt;&gt; db.session.commit()</span><br></pre></td></tr></table></figure>
+<ul>
+<li>删除行</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; db.session.delete(mod_role)</span><br><span class="line">&gt;&gt;&gt; db.session.commit()</span><br></pre></td></tr></table></figure>
+<ul>
+<li>查询</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; Role.query.all()</span><br><span class="line">&gt;&gt;&gt; User.query.all()</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; User.query.filter_by(role=user_role).all()</span><br><span class="line">&gt;&gt;&gt; str(User.query.filter_by(role=user_role))</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; user_role =  Role.query.filter_by(name=<span class="string">'User'</span>).first()</span><br><span class="line"></span><br><span class="line"><span class="comment"># lazy="dynamic"</span></span><br><span class="line">&gt;&gt;&gt; user_role.users.order_by(User.name).all()</span><br><span class="line">&gt;&gt;&gt; user_role.users.count()</span><br></pre></td></tr></table></figure>
+<h2 id="5-集成Python-shell"><a href="#5-集成Python-shell" class="headerlink" title="5. 集成Python shell"></a>5. 集成Python shell</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ pip install flask-script</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask.ext.script <span class="keyword">import</span> Shell, Manager</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">make_shell_context</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> dict(app=app, db=db, User=User, Role=Role)</span><br><span class="line"></span><br><span class="line">manager = Manager(app)</span><br><span class="line">manager.add_command(<span class="string">"shell"</span>, Shell(make_context=make_shell_context))</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ python hello.py shell</span><br><span class="line">&gt;&gt;&gt; app</span><br><span class="line">&gt;&gt;&gt; db</span><br></pre></td></tr></table></figure>
+<h2 id="6-使用Flask-Migrate实现数据库迁移"><a href="#6-使用Flask-Migrate实现数据库迁移" class="headerlink" title="6. 使用Flask-Migrate实现数据库迁移"></a>6. 使用Flask-Migrate实现数据库迁移</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ pip install Flask-Migrate</span><br></pre></td></tr></table></figure>
+<ul>
+<li>创建迁移仓库</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask.ext.migrate <span class="keyword">import</span> Migrate, MigrateCommand</span><br><span class="line"><span class="comment"># ...</span></span><br><span class="line">migrate = Migrate(app, db)</span><br><span class="line">manager.add_command(<span class="string">'db'</span>, MigrateCommand)</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ python hello.py db init</span><br></pre></td></tr></table></figure>
+<ul>
+<li>创建迁移脚本</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ python hello.py db migrate -m <span class="string">"initial migrate"</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>更新数据库</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ python hello.py db upgrade</span><br><span class="line"><span class="comment"># downgrade</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2016/07/01/flask-patterns-sqlalchemy/" data-id="ciq3ssewo000czt2rjatbgkgh" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flask/">Flask</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-flask-patterns-wtforms" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/07/01/flask-patterns-wtforms/">Flask中使用Web表单</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2016/07/01/flask-patterns-wtforms/" class="article-date"><time datetime="2016-07-01T13:45:00.000Z" itemprop="datePublished">2016-07-01</time></a>
+</div>
+
+    
+    
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在Flask中通过<code>request.form</code>以获取Web表单数据。但是生成表单的HTML代码和验证提交表单的数据，麻烦而且要重复操作。Flask-WTF扩展对WTForms包进行了包装，可以简化Flask中表单的处理。</p>
+<h2 id="1-跨站请求伪造保护"><a href="#1-跨站请求伪造保护" class="headerlink" title="1. 跨站请求伪造保护"></a>1. 跨站请求伪造保护</h2><p>WTF扩展可以使用配置中的通用密钥，生成加密令牌，再用令牌验证求情中表单数据的真伪。通常为了增加安全性，密钥不应直接写入代码，而要保存在环境变量中。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">app = Flask(__name__)</span><br><span class="line">app.config[<span class="string">'SECRET_KEY'</span>] = <span class="string">'hard to guess string'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># get SECRET_KEY from environment</span></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line">SECRET_KEY = os.environ.get(<span class="string">'SECRET_KEY'</span>) <span class="keyword">or</span> <span class="string">'hard to guess string'</span></span><br></pre></td></tr></table></figure>
+<h2 id="2-表单类"><a href="#2-表单类" class="headerlink" title="2. 表单类"></a>2. 表单类</h2><p>在使用Flask-WTF时，每个Web表单都由一个继承自Form的类表示。这个类定义了表单的字段，和本字段的验证方法，验证方法用来验证用户提交的输入值是否符合要求。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask_wtf <span class="keyword">import</span> Form</span><br><span class="line"><span class="keyword">from</span> wtforms <span class="keyword">import</span> StringField, SubmitField</span><br><span class="line"><span class="keyword">from</span> wtforms.validators <span class="keyword">import</span> Required</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">NameForm</span><span class="params">(Form)</span>:</span></span><br><span class="line">    name = StringField(<span class="string">'What is your name?'</span>, validators=[Required()])</span><br><span class="line">    submit = SubmitField(<span class="string">'Submit'</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="3-把表单渲染成HTML"><a href="#3-把表单渲染成HTML" class="headerlink" title="3. 把表单渲染成HTML"></a>3. 把表单渲染成HTML</h2><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">method</span>=<span class="string">"POST"</span>&gt;</span></span><br><span class="line">  &#123;&#123; form.hidden_tag() &#125;&#125;</span><br><span class="line">  &#123;&#123; form.name.label &#125;&#125; &#123;&#123; form.name(id='my-text-field') &#125;&#125;</span><br><span class="line">  &#123;&#123; form.submit() &#125;&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>这样渲染表单依旧很麻烦，而在Flask-Bootstrap中有预先定义好的样式，可以直接渲染整个Flask-WTF表单。<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#123;% import "bootstrap/wtf.html" as wtf %&#125;</span><br><span class="line">&#123;&#123; wtf.quick_form(form) &#125;&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="4-在视图函数中处理表单"><a href="#4-在视图函数中处理表单" class="headerlink" title="4. 在视图函数中处理表单"></a>4. 在视图函数中处理表单</h2><p>视图函数中需要渲染表单，接收处理表单数据。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route('/', methods=['GET', 'POST'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span><span class="params">()</span>:</span></span><br><span class="line">    name = <span class="keyword">None</span></span><br><span class="line">    form = NameForm()</span><br><span class="line">    <span class="keyword">if</span> form.validate_on_submit():</span><br><span class="line">        name = form.name.data</span><br><span class="line">        form.name.data = <span class="string">''</span></span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">'index.html'</span>, form=form, name=name)</span><br></pre></td></tr></table></figure></p>
+<h2 id="5-重定向和用户会话"><a href="#5-重定向和用户会话" class="headerlink" title="5. 重定向和用户会话"></a>5. 重定向和用户会话</h2><p>以上方法构建的页面有一个问题。在刷新提交过表单的页面后，会有一个再次调教表单的确认信息。这是因为，刷新后浏览器会自动提交最后一次请求，即之前的POST请求。它影响了使用体验，同时也让不了解的用户产生疑惑。一个解决办法就是在完成POST请求后重定向，再发送一个GET请求。</p>
+<p>但是在之后的GET请求中我们就无法获取POST的表单数据。此时可以利用用户会话Session，将数据加密存储于客户端的cookie中，方便程序的请求间「记住」数据。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> render_template, redirect, session, url_for</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route('/', methods=['GET', 'POST'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span><span class="params">()</span>:</span></span><br><span class="line">    form = NameForm</span><br><span class="line">    <span class="keyword">if</span> form.validate_on_submit():</span><br><span class="line">        session[<span class="string">'name'</span>] = form.name.data</span><br><span class="line">        <span class="keyword">return</span> redirect(url_for(<span class="string">'index'</span>))</span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">'index.html'</span>, form=form,</span><br><span class="line">        name=session.get(<span class="string">'name'</span>))</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2016/07/01/flask-patterns-wtforms/" data-id="ciq3ssewh000bzt2rax1ly49d" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flask/">Flask</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-tutorial-miniweibo-4" class="article article-type-post" itemscope itemprop="blogPost">
 
   <header class="article-header">
@@ -148,7 +386,7 @@
     
 
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/06/30/tutorial-miniweibo-4/" data-id="ciq2ewv52000l9j2r8z6o11xc" class="article-share-link">
+      <a data-url="http://yoursite.com/2016/06/30/tutorial-miniweibo-4/" data-id="ciq3ssex6000uzt2rnvhzg9b9" class="article-share-link">
         <i class="fa fa-share"></i> Share
       </a>
       
@@ -218,7 +456,7 @@
     
 
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/06/30/flask-ajax/" data-id="ciq2ewv4900039j2rd8lxszvx" class="article-share-link">
+      <a data-url="http://yoursite.com/2016/06/30/flask-ajax/" data-id="ciq3ssew70004zt2rv19ohqbx" class="article-share-link">
         <i class="fa fa-share"></i> Share
       </a>
       
@@ -272,7 +510,7 @@
     
 
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/06/29/bootstrap-cheatsheet/" data-id="ciq2ewv3z00009j2r2pz9056k" class="article-share-link">
+      <a data-url="http://yoursite.com/2016/06/29/bootstrap-cheatsheet/" data-id="ciq3ssew10001zt2r72s7kus2" class="article-share-link">
         <i class="fa fa-share"></i> Share
       </a>
       
@@ -327,7 +565,7 @@
     
 
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/06/29/tutorial-miniweibo-3/" data-id="ciq2ewv55000o9j2rykqtxgb3" class="article-share-link">
+      <a data-url="http://yoursite.com/2016/06/29/tutorial-miniweibo-3/" data-id="ciq3ssex2000szt2rx81kb4mb" class="article-share-link">
         <i class="fa fa-share"></i> Share
       </a>
       
@@ -417,7 +655,7 @@
     
 
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/06/28/jinja-template-cheatsheet/" data-id="ciq2ewv4u000d9j2r4nfe7t65" class="article-share-link">
+      <a data-url="http://yoursite.com/2016/06/28/jinja-template-cheatsheet/" data-id="ciq3ssewx000nzt2ryczkyf1k" class="article-share-link">
         <i class="fa fa-share"></i> Share
       </a>
       
@@ -527,7 +765,7 @@
     
 
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/06/28/tutorial-miniweibo-2/" data-id="ciq2ewv51000j9j2rb45gse4m" class="article-share-link">
+      <a data-url="http://yoursite.com/2016/06/28/tutorial-miniweibo-2/" data-id="ciq3ssex0000pzt2rxs1ij9w8" class="article-share-link">
         <i class="fa fa-share"></i> Share
       </a>
       
@@ -636,260 +874,13 @@
     
 
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/06/27/tutorial-miniweibo/" data-id="ciq2ewv4z000h9j2rgutth8y8" class="article-share-link">
+      <a data-url="http://yoursite.com/2016/06/27/tutorial-miniweibo/" data-id="ciq3ssewz000ozt2rniwodnqd" class="article-share-link">
         <i class="fa fa-share"></i> Share
       </a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flask/">Flask</a></li></ul>
 
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-sqlite-cheatsheet" class="article article-type-post" itemscope itemprop="blogPost">
-
-  <header class="article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/06/27/sqlite-cheatsheet/">SQLite Cheatsheet</a>
-    </h1>
-  
-
-
-  </header>
-
-  <div class="article-meta">
-    <div class="article-datetime">
-  <a href="/2016/06/27/sqlite-cheatsheet/" class="article-date"><time datetime="2016-06-27T06:34:10.000Z" itemprop="datePublished">2016-06-27</time></a>
-</div>
-
-    
-    
-
-  </div>
-  <div class="article-inner">
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>SQLite是一个轻量级的数据库，它以文件的形式存储在硬盘中，适合小型的简单应用。有些应用也会采用SQLite来做产品原型，然后把它迁移到其他功能更强大的数据库，比如：MySQL、PostgreSQL等。</p>
-<h3 id="Python标准库-——-sqlite3"><a href="#Python标准库-——-sqlite3" class="headerlink" title="Python标准库 —— sqlite3"></a>Python标准库 —— sqlite3</h3><p>参考：<a href="https://docs.python.org/2/library/sqlite3.html" target="_blank" rel="external">Python-Docs/sqlite3</a></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line">conn = sqlite3.connect(<span class="string">'example.db'</span>)</span><br><span class="line">c = conn.cursor()</span><br><span class="line"></span><br><span class="line"><span class="comment"># Create tables</span></span><br><span class="line">c.execute(<span class="string">'''CREATE TABLE stocks</span><br><span class="line">          (date text, trans text, symbol text, qty real, price real)'''</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Insert a row of database</span></span><br><span class="line">c.execute(<span class="string">"INSERT INTO stocks VALUES ('2016-06-27', 'BUY', 'APPL', 100, 100)"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Save (commit) the changes</span></span><br><span class="line">conn.commit()</span><br><span class="line"></span><br><span class="line">conn.close()</span><br><span class="line"></span><br><span class="line"><span class="comment"># Read from database</span></span><br><span class="line">conn = sqlite3.connect(<span class="string">'example.db'</span>)</span><br><span class="line">c = conn.cursor()</span><br><span class="line"></span><br><span class="line"><span class="comment"># Put ? as a placeholder and then provide a tuple of values</span></span><br><span class="line">t = (<span class="string">'APPL'</span>,)</span><br><span class="line">c.execute(<span class="string">'SELECT * FROM stocks WHERE symbol=?'</span>, t)</span><br><span class="line"><span class="keyword">print</span> c.fetchone()</span><br><span class="line"></span><br><span class="line"><span class="comment"># Larger example that inserts many records at a timestamp</span></span><br><span class="line">purchases = [(<span class="string">'2016-06-01'</span>, <span class="string">'BUY'</span>, <span class="string">'IBM'</span>, <span class="number">100</span>, <span class="number">45.00</span>),</span><br><span class="line">             (<span class="string">'2016-06-01'</span>, <span class="string">'BUY'</span>, <span class="string">'GOOG'</span>, <span class="number">100</span>, <span class="number">450.00</span>),</span><br><span class="line">            ]</span><br><span class="line">c.executemany(<span class="string">'INSERT INTO stocks VALUES (?,?,?,?,?)'</span>, purchases)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Treat the cursor as an iterator，or fetchall()</span></span><br><span class="line"><span class="keyword">for</span> row <span class="keyword">in</span> c.execute(<span class="string">'SELECT * FROM stocks ORDER BY price'</span>):</span><br><span class="line">    <span class="keyword">print</span> row</span><br></pre></td></tr></table></figure>
-<h3 id="在Flask中使用SQLite"><a href="#在Flask中使用SQLite" class="headerlink" title="在Flask中使用SQLite"></a>在Flask中使用SQLite</h3><p>参考：<a href="http://flask.pocoo.org/docs/0.11/patterns/sqlite3/" target="_blank" rel="external">Flask-Docs/sqlite3</a></p>
-<ul>
-<li>Simple Example</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> g</span><br><span class="line"></span><br><span class="line">DATABASE = <span class="string">'/path/to/database.db'</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_db</span><span class="params">()</span>:</span></span><br><span class="line">    db = getattr(g, <span class="string">'_database'</span>, <span class="keyword">None</span>)</span><br><span class="line">    <span class="keyword">if</span> db <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">        db = g._database = sqlite3.connect(DATABASE)</span><br><span class="line">        db.row_factory = sqlite3.Row</span><br><span class="line">    <span class="keyword">return</span> db</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.teardown_appcontext</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">close_connection</span><span class="params">(exception)</span>:</span></span><br><span class="line">    db = getattr(g, <span class="string">'_database'</span>, <span class="keyword">None</span>)</span><br><span class="line">    <span class="keyword">if</span> db <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</span><br><span class="line">        db.close()</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route('/')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span><span class="params">()</span>:</span></span><br><span class="line">    cur = get_db().cursor()</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> app.app_context():</span><br><span class="line">    <span class="comment"># now you can use get_db()</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>Easy Querying</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">query_db</span><span class="params">(query, args=<span class="params">()</span>, one=False)</span>:</span></span><br><span class="line">    cur = get_db().execute(query, args)</span><br><span class="line">    rv = cur.fetchall()</span><br><span class="line">    <span class="keyword">return</span> (rv[<span class="number">0</span>] <span class="keyword">if</span> rv <span class="keyword">else</span> <span class="keyword">None</span>) <span class="keyword">if</span> one <span class="keyword">else</span> rv</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> user <span class="keyword">in</span> query_db(<span class="string">'select * from users'</span>):</span><br><span class="line">    <span class="keyword">print</span> user[<span class="string">'username'</span>], <span class="string">'has the id'</span>, user[<span class="string">'user_id'</span>]</span><br><span class="line"></span><br><span class="line">user = query_db(<span class="string">'select * from users where username = ?'</span>,</span><br><span class="line">        [the_username], one=<span class="keyword">True</span>)</span><br><span class="line"><span class="keyword">if</span> user <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'No such user'</span></span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="keyword">print</span> the_username, <span class="string">'has the id'</span>, user[<span class="string">'user_id'</span>]</span><br></pre></td></tr></table></figure>
-<ul>
-<li>Initial Schemas</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">init_db</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">with</span> app.app_context():</span><br><span class="line">        db = get_db()</span><br><span class="line">        <span class="keyword">with</span> app.open_resource(<span class="string">'schema.sql'</span>, mode=<span class="string">'r'</span>) <span class="keyword">as</span> f:</span><br><span class="line">            db.cursor().executescript(f.read())</span><br><span class="line">        db.commit()</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; from yourapplication import init_db</span><br><span class="line">&gt;&gt;&gt; init_db()</span><br></pre></td></tr></table></figure>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.cli.command('initdb')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">initdb_command</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="string">"""Creates the database tables."""</span></span><br><span class="line">    init_db()</span><br><span class="line">    print(<span class="string">'Initialized the database.'</span>)</span><br></pre></td></tr></table></figure>
-<h3 id="SQL语句"><a href="#SQL语句" class="headerlink" title="SQL语句"></a>SQL语句</h3><p>参考：<a href="https://github.com/pallets/flask/blob/master/examples/minitwit/minitwit.py" target="_blank" rel="external">flask example</a></p>
-<ul>
-<li>schema</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">drop</span> <span class="keyword">table</span> <span class="keyword">if</span> <span class="keyword">exists</span> message;</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> message (</span><br><span class="line">  message_id <span class="built_in">integer</span> primary <span class="keyword">key</span> autoincrement,</span><br><span class="line">  author_id <span class="built_in">integer</span> <span class="keyword">not</span> <span class="literal">null</span>,</span><br><span class="line">  <span class="built_in">text</span> <span class="built_in">text</span> <span class="keyword">not</span> <span class="literal">null</span>,</span><br><span class="line">  pub_date <span class="built_in">integer</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-<ul>
-<li>select</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">messages=query_db(<span class="string">'''</span><br><span class="line">    select message.*, user.* from message, user</span><br><span class="line">    where message.author_id = user.user_id and (</span><br><span class="line">        user.user_id = ? or</span><br><span class="line">        user.user_id in (select whom_id from follower</span><br><span class="line">                                where who_id = ?))</span><br><span class="line">    order by message.pub_date desc limit ?'''</span>,</span><br><span class="line">    [session[<span class="string">'user_id'</span>], session[<span class="string">'user_id'</span>], PER_PAGE])</span><br></pre></td></tr></table></figure>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">followed = query_db(<span class="string">'''select 1 from follower where</span><br><span class="line">    follower.who_id = ? and follower.whom_id = ?'''</span>,</span><br><span class="line">    [session[<span class="string">'user_id'</span>], profile_user[<span class="string">'user_id'</span>]],</span><br><span class="line">    one=<span class="keyword">True</span>)</span><br></pre></td></tr></table></figure>
-<ul>
-<li>insert</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">db.execute(<span class="string">'insert into follower (who_id, whom_id) values (?, ?)'</span>,</span><br><span class="line">    [session[<span class="string">'user_id'</span>], whom_id])</span><br><span class="line">db.commit()</span><br></pre></td></tr></table></figure>
-<ul>
-<li>delete</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">db.execute(<span class="string">'delete from follower where who_id=? and whom_id=?'</span>,</span><br><span class="line">    [session[<span class="string">'user_id'</span>], whom_id])</span><br><span class="line">db.commit()</span><br></pre></td></tr></table></figure>
-<ul>
-<li>update</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">db.execute(<span class="string">'update message set text=? where message_id=?'</span>,</span><br><span class="line">    [new_text, message_id])</span><br><span class="line">db.commit()</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-      
-
-    
-
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/06/27/sqlite-cheatsheet/" data-id="ciq2ewv4h00079j2rk5hsytb2" class="article-share-link">
-        <i class="fa fa-share"></i> Share
-      </a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sqlite/">sqlite</a></li></ul>
-
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-how-to-travel" class="article article-type-post" itemscope itemprop="blogPost">
-
-  <header class="article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/06/26/how-to-travel/">关于旅行的一些想法</a>
-    </h1>
-  
-
-
-  </header>
-
-  <div class="article-meta">
-    <div class="article-datetime">
-  <a href="/2016/06/26/how-to-travel/" class="article-date"><time datetime="2016-06-26T14:48:46.000Z" itemprop="datePublished">2016-06-26</time></a>
-</div>
-
-    
-    
-
-  </div>
-  <div class="article-inner">
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="为什么旅行"><a href="#为什么旅行" class="headerlink" title="为什么旅行"></a>为什么旅行</h3><ul>
-<li>人们在旅行时，普遍会有一个更开放的心态去接受事物。</li>
-<li>旅行增加不同的体验，包括自然、人文等各个方面。</li>
-<li>走出熟悉的环境，陌生感会提醒你思考自己和这个世界的关系。</li>
-<li>旅行给你体验未知的勇气，让你去做自己想做的事，成为想成为的人。</li>
-</ul>
-<p>再过半个月就要启动自己下一次国外旅行了，一次二十多天的美国西部自驾游。如果没有外部愿意，但是我自己，可能一段时间内都没有旅行的想法了（包括即将启程的这次）。或者说说，没有让自己出发的冲动和理由。原因很难说，可能觉得目前自己的状体更加需要积累务实的技能，开创自己的实业，而非比较虚的旅行。</p>
-<p>说旅行比较务虚，并不表示我反对或者讨厌旅行。相反我国内转过以一些地儿，欧洲也去过几个国家，但如今每次想到旅行，都不禁要反问自己，旅行究竟有什么意义？</p>
-<p>记得去欧洲前，一度觉得人们已经没有必要旅行了，通过互联网上的游记各种视频图片，我们足以了解每个想要去的地方。有了网络可能就没有必要了旅行了。这是从观光的角度考量，但即使是观光，各人有个人不同的视角，同一片风景会有不同的感受和体悟，再就是经验还是一手的更加保真。暂且认为看看不同的风景，感受不同的人文风情，也是旅行的基本意义。</p>
-<p>之前的欧洲之旅极度轻松，可能那段时间正好是自己放下前一段的工作生活经历，准备开启下一段里程的衔接点。因此没有什么特别的压力。旅行时只想着路上的美景美食，只为猎奇，心态平和，对不同的包容度极强。那种放松的心灵状态，无疑给眼前的风景自动加了滤镜，夜色巴黎变得更浪漫，雨中的阿姆斯特丹也别有情调。如果你真的能全身心投入到旅途中，这种心灵的放松和愉悦感，的确是你在平时工作生活的久居之地很难达到的状态。</p>
-<p>灵感和思考都是需要素材的，这素材可以来自阅读，同样也可以出自旅行中的见闻。与阅读不同，旅行是获得一手鲜活素材的重要方式。你感受世界，发现不同，产生对比。感官刺激思考，这个过程无疑有助于创造新灵感、产生新想法，同时更可能去评估自己与这个世界的关系。</p>
-<p>跳出习惯的生活环境，从另外一个角度省事原来的自己。旅行本身就是走没走过的路，见没见过的人，把这份习惯和勇气带入平时的生活，去做自己想做的事，成为你自己想成为的人，也是旅行最重要的意义。</p>
-<p>我个人的一个原则是：收集更多的体验，对于实物，则保持基本需求即可。探求一件事情的意义总让人难以得到满意的答案，只愿每次旅行带给我更多的体验！</p>
-<p>用LV的文案来为此行做序：</p>
-<blockquote>
-<p>What is a journey?</p>
-<p>A journey is not a trip.</p>
-<p>It’s not a vacation</p>
-<p>It’s a process. A Discovery.</p>
-<p>It’s a process of self-discovery.</p>
-<p>A journey brings us face to face with ourselves.</p>
-<p>A journey shows us not only the world,</p>
-<p>but how we fit in it.</p>
-<p>Does the person create the journey</p>
-<p>or does the journey create the person?</p>
-<p>The journey is life itself.</p>
-<p>Where will life take you?</p>
-</blockquote>
-<h3 id="如何计划"><a href="#如何计划" class="headerlink" title="如何计划"></a>如何计划</h3><p>提早安排旅行。很多时候你并不会说走就走，打包行囊直接出发。旅行的念头可能很早就心里长草了，你应该提早为此规划。起码提前预定机票和住宿会让你剩下一大杯费用。适当对行程的熟悉程度，会让你的旅途更加靠谱充实。</p>
-<p>不要把行程安排的太满，留有一定的随机性。旅途中总会出现一些特殊情况，如果你把行程安排的满满当当，意味着你的行程没有任何容错性，突发状况会让你措手不及。同时只是机械的按行程赶路，没有任何惊喜，又有什么意思呢。你可以留些时间，让自己在陌生的地方无目的的闲逛，没准哪就会让你眼前一亮。</p>
-<p>避免跟风去热门景点，根据自己的兴趣安排特殊目的地。你可以去热门景点逛逛，但全部行程都是大众景点，那么你自己也就是一个普通的观光客而已，行前要对目的地有大概的认识，从而根据自己的兴趣爱好，寻找当地的参观体验点。如果你喜欢文物，就去当地的博物馆看看；喜欢各地特色，就去当地市场逛逛；喜欢咖啡，就深入小巷，在当地特色的咖啡馆奢侈的泡上半天。</p>
-<p>想办法获得更多的体验，不只是买买买。现在的出国游难免都有些购物游的特点，我们会顺道去奥特莱斯和各种免税店买买买。除了实物上的收获，你应该把更多的钱花在之前从没有的体验上。如果你一直住普通酒店，那么下一次试试Airbnb和青旅。如果你总是跟团，不妨来一次自助游。又或者不在单调的城市观光，试试国家公园的野营。旅行无非是体验未知，如果总是重复自己的老套路，岂不是很无趣？</p>
-<h3 id="留下什么"><a href="#留下什么" class="headerlink" title="留下什么"></a>留下什么</h3><p>如果你不带相机上路，那么你会为一次旅行留下什么呢？仅仅只是一些旅游纪念品吗。照片很廉价，你可以用手机或数码相机，随性来上成百上千张。但是你想过这里面有多少是来此一游式的记录，又有多少能给人美的冲击，或者关于目的地的思考。下次旅行前，可以学习一下拍照的技巧，拍照时留心下构图和想表达的状态。</p>
-<p>有时记忆是不可靠的。如果你想多少年后，还能栩栩如生的回忆起某次旅行的每个细节，那么你很可能需要在旅行后，写一篇游记。游记可以供自己回忆，同时也可以看做是一个旅行攻略，分享到网上，为后来的人提供一些行程指引和参考。</p>
-<p>其实每做一件事情，你都可以多花些心思，旅行除了走走看看，也可能产生很多有价值的副产品。我就在YouTube上看到很多旅行者录制了自己的旅行节目，用特别的角度观察世界，留下你的想法，对别人产生影响，这才价值所在。同样旅行中的见闻甚至会启发你新的灵感，为你将来的生活或者事业打开新的可能，关键是要用心体会。</p>
-
-      
-    </div>
-
-    
-      
-
-    
-
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/06/26/how-to-travel/" data-id="ciq2ewv4r000b9j2re6lsrj3i" class="article-share-link">
-        <i class="fa fa-share"></i> Share
-      </a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/思考/">思考</a></li></ul>
-
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-flask-app-pattern" class="article article-type-post" itemscope itemprop="blogPost">
-
-  <header class="article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/06/24/flask-app-pattern/">Flask Web应用的一般模式</a>
-    </h1>
-  
-
-
-  </header>
-
-  <div class="article-meta">
-    <div class="article-datetime">
-  <a href="/2016/06/24/flask-app-pattern/" class="article-date"><time datetime="2016-06-24T14:38:29.000Z" itemprop="datePublished">2016-06-24</time></a>
-</div>
-
-    
-    
-
-  </div>
-  <div class="article-inner">
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>圣贤云：程序 = 数据结构 + 算法。</p>
-<p>粗略看，Flask应用 = Models + View Functions + Templates。</p>
-<p>其中Model即模型，是对Web应用的抽象表达，通常用关系数据库来实现。比如我们对一个博客应用进行模型抽象，即回答博客是什么。博客首先要有文章，每篇文章至少有标题和正文。如果开通评论，那么每个评论会对应：评论人，所属文章，和评论内容。还有些博客有几个人共同维护，每个人对应不同的管理权限，那么每个人都会有id、权限等属性。因此一个博客程序所抽象出来的Model就是，表示文章、评论和用户的三张表格。这些表格利用数据库schema来定义，生成相应的数据库，随着程序的运行会对里面的数据进行增删改查的操作。你通过网页看谋篇博文，其实是Web应用从表示文章的表格中读取了相应的一篇，返回给浏览器的。</p>
-<p>所以在创建基于Flask的应用时，我们首先考虑要实现的项目目标，进而抽象出模型，利用关系模型来表示，最终在选取相应的数据库在程序中实现。对于练手的小型项目可以选择sqlite，大型直接选开源的MySQL。</p>
-<p>在用户看来，使用Web应用，也就是浏览网站，无非是打开一个个网页。从开发者角度看，用户每输入一个网址或点击一个连接，都是期待获得一个新的页面。用技术的语言讲就是，Web编程就是，编写处理每个HTTP请求并返回响应内容的程序。而像Flask这样的Web框架，简化了我们处理请求的过程，它对请求和响应进行了抽象，做了大量底层的工作，让我们只要编写每个URL对应的响应函数就行了，一个请求对应一个View Function。</p>
-<p>返回的内容基本上都是网页。对于一个网站而言不同的页面间有相同的布局和元素，只有部分内容不同。而且如果直接返回HTML代码会让程序很难维护。基于以上两点，Flask和大部分Web框架一样，都会采用模板机制。返回的内容添加到提前预设好的模板中，再把通过模板渲染后的网页响应给用户。在Flask中，采用Jinja模板。</p>
-<p>所以开发Flask应用的一般流程和模式如下：</p>
-<ol>
-<li>确定项目要实现的功能特性</li>
-<li>设定开发环境和项目结构</li>
-<li>抽象出数据模型</li>
-<li>处理数据库的链接、创建等</li>
-<li>根据不同的URL请求编写视图函数</li>
-<li>根据视图函数的返回内容，编写不同的模板。</li>
-<li>给模板添加样式，使用css。</li>
-<li>对程序进行测试，利用unittest.</li>
-<li>部署到服务器，比如Heroku云服务。</li>
-</ol>
-
-      
-    </div>
-
-    
-      
-
-    
-
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/06/24/flask-app-pattern/" data-id="ciq2ewv4a00049j2rnbfsce0u" class="article-share-link">
-        <i class="fa fa-share"></i> Share
-      </a>
-      
-      
 
     </footer>
   </div>
@@ -923,7 +914,7 @@
   
   <div class="sidebar-module">
     <h4>Tags</h4>
-    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/100挑战/">100挑战</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/AJAX/">AJAX</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/CheatSheet/">CheatSheet</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/Flask/">Flask</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/Jinja/">Jinja</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/bootstrap/">bootstrap</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cheatsheet/">cheatsheet</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlite/">sqlite</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tutorial/">tutorial</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/思考/">思考</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/记录/">记录</a><span class="sidebar-module-list-count">1</span></li></ul>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/100挑战/">100挑战</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/AJAX/">AJAX</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/CheatSheet/">CheatSheet</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/Flask/">Flask</a><span class="sidebar-module-list-count">9</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/Jinja/">Jinja</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/bootstrap/">bootstrap</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cheatsheet/">cheatsheet</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlite/">sqlite</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tutorial/">tutorial</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/思考/">思考</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/记录/">记录</a><span class="sidebar-module-list-count">1</span></li></ul>
   </div>
 
 
@@ -940,7 +931,7 @@
   
   <div class="sidebar-module">
     <h4>Archives</h4>
-    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/06/">June 2016</a><span class="sidebar-module-list-count">14</span></li></ul>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/07/">July 2016</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/06/">June 2016</a><span class="sidebar-module-list-count">14</span></li></ul>
   </div>
 
 
@@ -951,23 +942,23 @@
     <ul class="sidebar-module-list">
       
         <li>
+          <a href="/2016/07/01/flask-app-structure/">Flask程序结构</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/01/flask-patterns-sqlalchemy/">Flask中使用SQLAlchemy</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/01/flask-patterns-wtforms/">Flask中使用Web表单</a>
+        </li>
+      
+        <li>
           <a href="/2016/06/30/tutorial-miniweibo-4/">利用Flask创建一个mini微博(4)</a>
         </li>
       
         <li>
           <a href="/2016/06/30/flask-ajax/">AJAX with jQuery in Flask</a>
-        </li>
-      
-        <li>
-          <a href="/2016/06/29/bootstrap-cheatsheet/">Bootstrap - Cheat Sheet</a>
-        </li>
-      
-        <li>
-          <a href="/2016/06/29/tutorial-miniweibo-3/">利用Flask创建一个mini微博(3)</a>
-        </li>
-      
-        <li>
-          <a href="/2016/06/28/jinja-template-cheatsheet/">Jinja Cheat Sheet</a>
         </li>
       
     </ul>
