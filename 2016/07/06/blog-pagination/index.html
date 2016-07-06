@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>博客分页功能 | 日課書</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="当博客有很多文章后，在首页显示所有文章，会让加载速度变慢，同时也会影响浏览体验。一个好的办法，就是对博文进行分页，每页仅显示一部分文章，然后通过导航跳转到相应的页面。如果使用Flask,可以利用SQLAlchemy和Bootstrap插件的分页功能，高效的实现博客分页效果。
+0. 创建虚拟文章数据想要实现博客的分页功能，首先需要我们的博客有足够的数据，在开发阶段，只能通过自动产生数据的手段来满足要">
+<meta property="og:type" content="article">
+<meta property="og:title" content="博客分页功能">
+<meta property="og:url" content="http://yoursite.com/2016/07/06/blog-pagination/index.html">
+<meta property="og:site_name" content="日課書">
+<meta property="og:description" content="当博客有很多文章后，在首页显示所有文章，会让加载速度变慢，同时也会影响浏览体验。一个好的办法，就是对博文进行分页，每页仅显示一部分文章，然后通过导航跳转到相应的页面。如果使用Flask,可以利用SQLAlchemy和Bootstrap插件的分页功能，高效的实现博客分页效果。
+0. 创建虚拟文章数据想要实现博客的分页功能，首先需要我们的博客有足够的数据，在开发阶段，只能通过自动产生数据的手段来满足要">
+<meta property="og:updated_time" content="2016-07-06T13:22:51.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="博客分页功能">
+<meta name="twitter:description" content="当博客有很多文章后，在首页显示所有文章，会让加载速度变慢，同时也会影响浏览体验。一个好的办法，就是对博文进行分页，每页仅显示一部分文章，然后通过导航跳转到相应的页面。如果使用Flask,可以利用SQLAlchemy和Bootstrap插件的分页功能，高效的实现博客分页效果。
+0. 创建虚拟文章数据想要实现博客的分页功能，首先需要我们的博客有足够的数据，在开发阶段，只能通过自动产生数据的手段来满足要">
+  
+    <link rel="alternate" href="/atom.xml" title="日課書" type="application/atom+xml">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+          <li><a href="/atom.xml" title="RSS Feed"><i class="fa fa-rss"></i></a></li>
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">日課書</h1>
+  
+    <p class="lead blog-description">编程100小时挑战</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-8 blog-main">
+          <article id="post-blog-pagination" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      博客分页功能
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2016/07/06/blog-pagination/" class="article-date"><time datetime="2016-07-06T13:22:51.000Z" itemprop="datePublished">2016-07-06</time></a>
+</div>
+
+    
+    
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>当博客有很多文章后，在首页显示所有文章，会让加载速度变慢，同时也会影响浏览体验。一个好的办法，就是对博文进行分页，每页仅显示一部分文章，然后通过导航跳转到相应的页面。如果使用Flask,可以利用SQLAlchemy和Bootstrap插件的分页功能，高效的实现博客分页效果。</p>
+<h2 id="0-创建虚拟文章数据"><a href="#0-创建虚拟文章数据" class="headerlink" title="0. 创建虚拟文章数据"></a>0. 创建虚拟文章数据</h2><p>想要实现博客的分页功能，首先需要我们的博客有足够的数据，在开发阶段，只能通过自动产生数据的手段来满足要求。Python中的ForgeryPy包，可用于产生虚拟信息。</p>
+<p>首先安装forgerypy，<code>pip install forgerypy</code></p>
+<p>为博客的文章Post模型，创建类方法，用来产生虚拟数据。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Post</span><span class="params">(db.Model)</span>:</span></span><br><span class="line">    __tablename__ = <span class="string">'posts'</span></span><br><span class="line">    id = db.Column(db.Integer, primary_key=<span class="keyword">True</span>)</span><br><span class="line">    title = db.Column(db.String)</span><br><span class="line">    summary = db.Column(db.String)</span><br><span class="line">    content = db.Column(db.Text)</span><br><span class="line">    timestamp = db.Column(db.DateTime, index=<span class="keyword">True</span>, default=datetime.utcnow)</span><br><span class="line">    author_id = db.Column(db.Integer, db.ForeignKey(<span class="string">'users.id'</span>))</span><br><span class="line"></span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">generate_fake</span><span class="params">(count=<span class="number">100</span>)</span>:</span></span><br><span class="line">        <span class="keyword">from</span> random <span class="keyword">import</span> seed, randint</span><br><span class="line">        <span class="keyword">import</span> forgery_py</span><br><span class="line"></span><br><span class="line">        seed()</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(count):</span><br><span class="line">            p = Post(title=forgery_py.lorem_ipsum.title(),</span><br><span class="line">                summary=forgery_py.lorem_ipsum.sentences(randint(<span class="number">1</span>,<span class="number">2</span>)),</span><br><span class="line">                content=forgery_py.lorem_ipsum.sentences(randint(<span class="number">5</span>,<span class="number">8</span>)),</span><br><span class="line">                timestamp=forgery_py.date.date(<span class="keyword">True</span>),</span><br><span class="line">                author_id=User.query.filter_by(is_administrator=<span class="keyword">True</span>).first().id</span><br><span class="line">                )</span><br><span class="line">            db.session.add(p)</span><br><span class="line">            db.session.commit()</span><br></pre></td></tr></table></figure>
+<h2 id="1-在页面中获得分页渲染数据"><a href="#1-在页面中获得分页渲染数据" class="headerlink" title="1. 在页面中获得分页渲染数据"></a>1. 在页面中获得分页渲染数据</h2><p>为了支持分页，我们在视图函数中需要获取到，分页类型的数据。可以利用SQLAlchemy提供的paginate()方法，，来显示某页记录。同时可以使用get方法来获取，通过查询字符串方式添加到URL的页码。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line">    page = request.args.get(<span class="string">'page'</span>, <span class="number">1</span>, type=int)</span><br><span class="line">    pagination = Post.query.order_by(Post.timestamp.desc()).paginate(page, per_page=current_app.config[<span class="string">'GRITY_POSTS_PER_PAGE'</span>], error_out=<span class="keyword">False</span>)</span><br><span class="line">    posts = pagination.items</span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">'index.html'</span>, posts=posts, pagination=pagination)</span><br></pre></td></tr></table></figure>
+<h2 id="2-添加分页导航"><a href="#2-添加分页导航" class="headerlink" title="2. 添加分页导航"></a>2. 添加分页导航</h2><p>paginate()方法返回值是一个Pagination类对象，这个对象在SQLAlchemy中定义。其中很多属性可以用于在模板中生成分页链接，因此将其作为参数传入模板。在模板中利用Bootstrap的分页css类就能实现分页导航。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- app/templates/_macros.html --&gt;</span></span><br><span class="line">&#123;% macro pagination_widget(pagination, endpoint) %&#125;</span><br><span class="line"><span class="tag">&lt;<span class="name">ul</span> <span class="attr">class</span>=<span class="string">"pagination"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">li&#123;%</span> <span class="attr">if</span> <span class="attr">not</span> <span class="attr">pagination.has_prev</span> %&#125; <span class="attr">class</span>=<span class="string">"disable"</span>&#123;% <span class="attr">endif</span> %&#125;&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"&#123;% if pagination.has_prev %&#125;&#123;&#123; url_for(endpoint, page=pagination.page-1,</span><br><span class="line">       **kwargs) &#125;&#125;&#123;% else %&#125;#&#123;% endif %&#125;"</span>&gt;</span>&amp;laquo;<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">  &#123;% for p in pagination.iter_pages() %&#125;</span><br><span class="line">    &#123;% if p %&#125;</span><br><span class="line">      &#123;% if p == pagination.page %&#125;</span><br><span class="line">      <span class="tag">&lt;<span class="name">li</span> <span class="attr">class</span>=<span class="string">"active"</span>&gt;</span></span><br><span class="line">      &#123;% else %&#125;</span><br><span class="line">      <span class="tag">&lt;<span class="name">li</span>&gt;</span></span><br><span class="line">      &#123;% endif %&#125;</span><br><span class="line">        <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"&#123;&#123; url_for(endpoint, page=p, **kwargs) &#125;&#125;"</span>&gt;</span>&#123;&#123; p &#125;&#125;<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    &#123;% else %&#125;</span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span> <span class="attr">class</span>=<span class="string">"disable"</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"#"</span>&gt;</span>&amp;hellip;<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    &#123;% endif %&#125;</span><br><span class="line">  &#123;% endfor %&#125;</span><br><span class="line">  <span class="tag">&lt;<span class="name">li&#123;%</span> <span class="attr">if</span> <span class="attr">not</span> <span class="attr">pagination.has_next</span> %&#125; <span class="attr">class</span>=<span class="string">"disable"</span>&#123;% <span class="attr">endif</span> %&#125;&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"&#123;% if pagination.has_next %&#125;&#123;&#123; url_for(endpoint, page=pagination.page+1,</span><br><span class="line">       **kwargs) &#125;&#125;&#123;% else %&#125;#&#123;% endif %&#125;"</span>&gt;</span>&amp;rquo;<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br><span class="line">&#123;% endmacro %&#125;</span><br></pre></td></tr></table></figure>
+<p>把创建的宏引入页面</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">&#123;% import "_macros.html" as macros %&#125;</span><br><span class="line">...</span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"pagination"</span>&gt;</span></span><br><span class="line">  &#123;&#123; macros.pagination_widget(pagination,'.index') &#125;&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2016/07/06/blog-pagination/" data-id="ciqax6frf0003cr2rgm2sgiue" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flask/">Flask</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2016/07/06/blog-pagedown/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">在博客中支持Markdown</span>
+    </a>
+  </li>
+  
+  
+</ul>
+
+
+  
+</article>
+
+
+
+
+        </div>
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+          
+  <div class="sidebar-module sidebar-module-inset">
+  <h4>About</h4>
+  <p>淡定，耐心，积累。创造完整的作品。 编程100小时的挑战，旨在一个月内(2016/6/23开始),用100小时提高编程水平。 目标-行动-记录-改进。</p>
+
+</div>
+
+
+  
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/100挑战/">100挑战</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/AJAX/">AJAX</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/CheatSheet/">CheatSheet</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/Flask/">Flask</a><span class="sidebar-module-list-count">11</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/Jinja/">Jinja</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/bootstrap/">bootstrap</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cheatsheet/">cheatsheet</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/markdown/">markdown</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/product/">product</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlite/">sqlite</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tutorial/">tutorial</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/思考/">思考</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/记录/">记录</a><span class="sidebar-module-list-count">1</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/100挑战/" style="font-size: 15px;">100挑战</a> <a href="/tags/AJAX/" style="font-size: 10px;">AJAX</a> <a href="/tags/CheatSheet/" style="font-size: 10px;">CheatSheet</a> <a href="/tags/Flask/" style="font-size: 20px;">Flask</a> <a href="/tags/Jinja/" style="font-size: 10px;">Jinja</a> <a href="/tags/bootstrap/" style="font-size: 10px;">bootstrap</a> <a href="/tags/cheatsheet/" style="font-size: 10px;">cheatsheet</a> <a href="/tags/flask/" style="font-size: 10px;">flask</a> <a href="/tags/markdown/" style="font-size: 10px;">markdown</a> <a href="/tags/product/" style="font-size: 10px;">product</a> <a href="/tags/sqlite/" style="font-size: 10px;">sqlite</a> <a href="/tags/tutorial/" style="font-size: 15px;">tutorial</a> <a href="/tags/思考/" style="font-size: 10px;">思考</a> <a href="/tags/记录/" style="font-size: 10px;">记录</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/07/">July 2016</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/06/">June 2016</a><span class="sidebar-module-list-count">14</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2016/07/06/blog-pagination/">博客分页功能</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/06/blog-pagedown/">在博客中支持Markdown</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/04/code-100-halfway/">100小时编程挑战——半程感想</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/02/blog-app-design/">博客项目设计</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/01/flask-app-structure/">Flask程序结构</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Yibin<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+  
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js" integrity="sha384-8gBf6Y4YYq7Jx97PIqmTwLPin4hxIzQw5aDmUg/DDhul9fFpbbLcLh3nTIIDJKhx" crossorigin="anonymous"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>
