@@ -1,0 +1,577 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>圆圆识字 - 极简字卡</title>
+  <style>
+    :root {
+      --ink: #172326;
+      --muted: #65777a;
+      --line: #d8e4e1;
+      --paper: #fffdf8;
+      --green: #2f8f73;
+      --green-soft: #e6f4ee;
+      --coral: #ef6f61;
+      --blue: #5398c3;
+      --yellow: #f2bf48;
+      --shadow: 0 22px 50px rgba(35, 52, 56, .13);
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      color: var(--ink);
+      background: #f5faf8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        linear-gradient(180deg, #f5faf8 0%, #fffdf8 48%, #eef7fb 100%);
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .page {
+      width: min(1080px, calc(100% - 28px));
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 24px 0 34px;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 18px;
+    }
+
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: 0;
+      line-height: 1.2;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tab-group {
+      display: inline-flex;
+      gap: 4px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .86);
+      box-shadow: 0 8px 22px rgba(35, 52, 56, .08);
+    }
+
+    .tab {
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: "Kaiti SC", "STKaiti", "KaiTi", serif;
+      font-size: 23px;
+      line-height: 1;
+    }
+
+    .tab[aria-pressed="true"] {
+      background: var(--green);
+      color: white;
+    }
+
+    .print-button {
+      min-height: 44px;
+      border: 1px solid #bad7cf;
+      border-radius: 8px;
+      background: white;
+      color: #235f50;
+      padding: 0 14px;
+      cursor: pointer;
+      box-shadow: 0 8px 22px rgba(35, 52, 56, .08);
+    }
+
+    .stage {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(360px, .95fr) minmax(260px, .55fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .card {
+      position: relative;
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card {
+      min-height: min(720px, calc(100vh - 118px));
+      padding: clamp(22px, 4vw, 46px);
+      display: grid;
+      grid-template-rows: 1fr auto auto;
+      gap: clamp(16px, 3vw, 26px);
+    }
+
+    .hero-main {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(170px, .42fr);
+      gap: clamp(16px, 3vw, 30px);
+      align-items: center;
+    }
+
+    .hanzi {
+      justify-self: center;
+      font-family: "Kaiti SC", "STKaiti", "KaiTi", "Songti SC", serif;
+      font-size: clamp(190px, 28vw, 350px);
+      font-weight: 700;
+      line-height: .9;
+      letter-spacing: 0;
+      color: #142226;
+    }
+
+    .art {
+      width: min(100%, 240px);
+      aspect-ratio: 1;
+      justify-self: center;
+      position: relative;
+    }
+
+    .art svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      overflow: visible;
+    }
+
+    .words {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .word {
+      min-height: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      background: var(--green-soft);
+      color: #216657;
+      padding: 0 18px;
+      font-size: clamp(20px, 2.2vw, 30px);
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .sentence {
+      margin: 0;
+      text-align: center;
+      color: var(--coral);
+      font-size: clamp(22px, 2.5vw, 34px);
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .print-sheet {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .mini-card {
+      min-height: 0;
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 96px 1fr 82px;
+      gap: 12px;
+      align-items: center;
+      box-shadow: none;
+      cursor: pointer;
+    }
+
+    .mini-card[aria-current="true"] {
+      border-color: #8bc7b2;
+      background: #f8fffb;
+    }
+
+    .mini-card .hanzi {
+      font-size: 86px;
+    }
+
+    .mini-card .art {
+      width: 76px;
+    }
+
+    .mini-text {
+      min-width: 0;
+      display: grid;
+      gap: 7px;
+    }
+
+    .mini-words {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .mini-words span {
+      color: #216657;
+      background: var(--green-soft);
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .mini-sentence {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .print-grid {
+      display: none;
+    }
+
+    .print-card {
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) auto auto;
+      gap: 7mm;
+      padding: 9mm;
+      border: .35mm solid #cbd9d6;
+      border-radius: 2mm;
+      background: var(--paper);
+      overflow: hidden;
+      break-inside: avoid;
+    }
+
+    .print-card-main {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 1fr 35mm;
+      gap: 6mm;
+      align-items: center;
+    }
+
+    .print-card .hanzi {
+      font-size: 58mm;
+      justify-self: center;
+    }
+
+    .print-card .art {
+      width: 33mm;
+    }
+
+    .print-card .words {
+      gap: 3mm;
+    }
+
+    .print-card .word {
+      min-height: 10mm;
+      padding: 0 5mm;
+      font-size: 7mm;
+    }
+
+    .print-card .sentence {
+      font-size: 7mm;
+      line-height: 1.25;
+    }
+
+    @media (max-width: 880px) {
+      .page {
+        width: min(100% - 20px, 640px);
+      }
+
+      .toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .controls {
+        justify-content: flex-start;
+      }
+
+      .stage {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-card {
+        min-height: calc(100vh - 160px);
+      }
+
+      .hero-main {
+        grid-template-columns: 1fr;
+        align-content: center;
+      }
+
+      .hanzi {
+        font-size: clamp(190px, 54vw, 310px);
+      }
+
+      .art {
+        width: min(45vw, 190px);
+      }
+
+      .print-sheet {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .mini-card {
+        grid-template-columns: 76px 1fr;
+      }
+
+      .mini-card .art {
+        display: none;
+      }
+
+      .mini-card .hanzi {
+        font-size: 70px;
+      }
+    }
+
+    @media (max-width: 540px) {
+      .page {
+        padding-top: 14px;
+      }
+
+      .brand {
+        font-size: 20px;
+      }
+
+      .tab {
+        width: 28px;
+        height: 30px;
+        font-size: 20px;
+      }
+
+      .hero-card {
+        min-height: calc(100vh - 150px);
+        padding: 18px;
+      }
+
+      .hanzi {
+        font-size: clamp(170px, 60vw, 260px);
+      }
+
+      .word {
+        min-height: 36px;
+        padding: 0 13px;
+        font-size: 20px;
+      }
+
+      .sentence {
+        font-size: 22px;
+      }
+
+      .print-sheet {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 8mm;
+      }
+
+      body {
+        background: white;
+      }
+
+      .page {
+        width: auto;
+        min-height: auto;
+        padding: 0;
+        display: block;
+      }
+
+      .toolbar,
+      .stage {
+        display: none;
+      }
+
+      .print-grid {
+        display: grid;
+        width: 194mm;
+        min-height: 281mm;
+        grid-template-columns: 1fr 1fr;
+        grid-auto-rows: 136mm;
+        gap: 6mm;
+      }
+
+      .print-card {
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="toolbar">
+      <div class="brand">圆圆识字</div>
+      <div class="controls">
+        <div class="tab-group" aria-label="选择字卡"></div>
+        <button class="print-button" type="button" onclick="window.print()">打印</button>
+      </div>
+    </header>
+
+    <section class="stage" aria-label="字卡预览">
+      <article class="card hero-card" id="hero-card"></article>
+      <div class="print-sheet" id="mini-list" aria-label="字卡列表"></div>
+    </section>
+
+    <section class="print-grid" id="print-grid" aria-label="打印字卡"></section>
+  </main>
+
+  <script>
+    const cards = [
+      {
+        char: "来",
+        words: ["来了", "过来", "回来"],
+        sentence: "圆圆快快走过来。",
+        art: "come"
+      },
+      {
+        char: "快",
+        words: ["快乐", "快跑", "快点"],
+        sentence: "我们快乐地向前跑。",
+        art: "fast"
+      },
+      {
+        char: "看",
+        words: ["看见", "看书", "看看"],
+        sentence: "我看见一朵小花。",
+        art: "look"
+      },
+      {
+        char: "跳",
+        words: ["跳高", "跳远", "跳一跳"],
+        sentence: "圆圆开心地跳起来。",
+        art: "jump"
+      }
+    ];
+
+    const artMap = {
+      come: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="走过来">
+          <path d="M18 52 L38 34 L58 52" fill="none" stroke="var(--green)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M25 52 V90 H52 V52" fill="none" stroke="var(--green)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M62 88 H28" fill="none" stroke="var(--blue)" stroke-width="8" stroke-linecap="round"/>
+          <path d="M39 77 L28 88 L39 99" fill="none" stroke="var(--blue)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="86" cy="39" r="9" fill="var(--yellow)"/>
+          <path d="M84 51 L75 68 M84 51 L96 67 M75 68 L66 84 M75 68 L88 84" fill="none" stroke="var(--coral)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>`,
+      fast: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="快快跑">
+          <path d="M12 38 H41 M8 58 H34 M17 78 H48" stroke="var(--blue)" stroke-width="8" stroke-linecap="round"/>
+          <circle cx="68" cy="32" r="9" fill="var(--yellow)"/>
+          <path d="M66 44 L56 62 L77 58" fill="none" stroke="var(--green)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M57 62 L42 83 M63 64 L82 84" fill="none" stroke="var(--green)" stroke-width="8" stroke-linecap="round"/>
+          <path d="M77 58 L99 47" fill="none" stroke="var(--coral)" stroke-width="8" stroke-linecap="round"/>
+          <path d="M91 37 L103 47 L94 60" fill="none" stroke="var(--coral)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>`,
+      look: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="看见小花">
+          <path d="M18 39 C36 27 58 27 77 39" fill="none" stroke="var(--coral)" stroke-width="8" stroke-linecap="round"/>
+          <path d="M19 61 C30 47 44 40 57 40 C70 40 84 47 95 61 C84 75 70 82 57 82 C44 82 30 75 19 61 Z" fill="none" stroke="var(--green)" stroke-width="8" stroke-linejoin="round"/>
+          <circle cx="57" cy="61" r="11" fill="none" stroke="var(--blue)" stroke-width="7"/>
+          <circle cx="61" cy="57" r="4" fill="var(--yellow)"/>
+          <path d="M96 79 V96 M84 86 C91 75 101 75 108 86 M84 86 C92 96 101 96 108 86" fill="none" stroke="var(--coral)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>`,
+      jump: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="跳起来">
+          <path d="M31 72 C40 35 79 35 88 72" fill="none" stroke="var(--blue)" stroke-width="7" stroke-linecap="round" stroke-dasharray="8 10"/>
+          <circle cx="61" cy="28" r="9" fill="var(--yellow)"/>
+          <path d="M61 40 L51 58 L70 58" fill="none" stroke="var(--green)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M51 58 L35 49 M70 58 L86 48" fill="none" stroke="var(--green)" stroke-width="8" stroke-linecap="round"/>
+          <path d="M54 58 L42 82 M68 59 L83 80" fill="none" stroke="var(--coral)" stroke-width="8" stroke-linecap="round"/>
+          <path d="M25 95 H95" fill="none" stroke="var(--blue)" stroke-width="8" stroke-linecap="round"/>
+        </svg>`
+    };
+
+    const hero = document.querySelector("#hero-card");
+    const tabs = document.querySelector(".tab-group");
+    const miniList = document.querySelector("#mini-list");
+    const printGrid = document.querySelector("#print-grid");
+
+    function cardHtml(card, className = "") {
+      return `
+        <div class="${className ? className + "-main" : "hero-main"}">
+          <div class="hanzi">${card.char}</div>
+          <div class="art">${artMap[card.art]}</div>
+        </div>
+        <div class="words">
+          ${card.words.map((word) => `<span class="word">${word}</span>`).join("")}
+        </div>
+        <p class="sentence">${card.sentence}</p>
+      `;
+    }
+
+    function miniHtml(card, index, current) {
+      return `
+        <article class="card mini-card" role="button" tabindex="0" data-index="${index}" aria-current="${current}">
+          <div class="hanzi">${card.char}</div>
+          <div class="mini-text">
+            <div class="mini-words">${card.words.map((word) => `<span>${word}</span>`).join("")}</div>
+            <div class="mini-sentence">${card.sentence}</div>
+          </div>
+          <div class="art">${artMap[card.art]}</div>
+        </article>
+      `;
+    }
+
+    function render(index = 0) {
+      const card = cards[index];
+      hero.innerHTML = cardHtml(card);
+      tabs.querySelectorAll(".tab").forEach((tab, tabIndex) => {
+        tab.setAttribute("aria-pressed", String(tabIndex === index));
+      });
+      miniList.innerHTML = cards.map((item, itemIndex) => miniHtml(item, itemIndex, itemIndex === index)).join("");
+      miniList.querySelectorAll(".mini-card").forEach((node) => {
+        const nextIndex = Number(node.dataset.index);
+        node.addEventListener("click", () => render(nextIndex));
+        node.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") render(nextIndex);
+        });
+      });
+    }
+
+    tabs.innerHTML = cards.map((card, index) => `
+      <button class="tab" type="button" aria-pressed="${index === 0}" data-index="${index}">${card.char}</button>
+    `).join("");
+
+    tabs.querySelectorAll(".tab").forEach((tab) => {
+      tab.addEventListener("click", () => render(Number(tab.dataset.index)));
+    });
+
+    printGrid.innerHTML = cards.map((card) => `
+      <article class="print-card">${cardHtml(card, "print-card")}</article>
+    `).join("");
+
+    render(0);
+  </script>
+</body>
+</html>
