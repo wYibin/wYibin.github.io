@@ -99,6 +99,22 @@
       min-width: 52px;
     }
 
+    .random-button {
+      min-height: 38px;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      border-radius: 0;
+      background: transparent;
+      color: #216657;
+      padding: 0 2px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .random-button:hover {
+      color: var(--green);
+    }
+
     .tab-group {
       display: inline-flex;
       flex: 1 1 280px;
@@ -497,6 +513,7 @@
           <input class="search-input" id="search-input" type="search" placeholder="搜字" aria-label="搜索字卡" autocomplete="off">
         </label>
         <div class="result-count" id="result-count"></div>
+        <button class="random-button" id="random-button" type="button" aria-label="随机字卡" title="随机字卡">随机</button>
         <div class="tab-group" aria-label="选择字卡"></div>
         <button class="print-button" type="button" onclick="window.print()">打印</button>
       </div>
@@ -867,6 +884,7 @@
     const miniList = document.querySelector("#mini-list");
     const printGrid = document.querySelector("#print-grid");
     const searchInput = document.querySelector("#search-input");
+    const randomButton = document.querySelector("#random-button");
     const resultCount = document.querySelector("#result-count");
     const state = { selected: 0, query: "" };
 
@@ -979,6 +997,18 @@
     searchInput.addEventListener("input", () => {
       state.query = searchInput.value;
       render(state.selected);
+    });
+
+    randomButton.addEventListener("click", () => {
+      const visible = visibleIndexes();
+      if (!visible.length) return;
+      let next = visible[Math.floor(Math.random() * visible.length)];
+      if (visible.length > 1) {
+        while (next === state.selected) {
+          next = visible[Math.floor(Math.random() * visible.length)];
+        }
+      }
+      render(next);
     });
 
     render(0);
