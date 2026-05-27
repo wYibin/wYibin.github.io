@@ -72,26 +72,25 @@
     }
 
     .search-wrap {
-      min-height: 44px;
+      min-height: 38px;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: rgba(255, 255, 255, .9);
-      padding: 0 12px;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      border-radius: 0;
+      background: transparent;
+      padding: 0 2px;
       color: var(--muted);
-      box-shadow: 0 8px 22px rgba(35, 52, 56, .08);
     }
 
     .search-input {
-      width: 180px;
-      min-height: 34px;
+      width: 96px;
+      min-height: 32px;
       border: 0;
       outline: 0;
       background: transparent;
       color: var(--ink);
-      font-size: 17px;
+      font-size: 16px;
     }
 
     .result-count {
@@ -421,11 +420,11 @@
       }
 
       .search-wrap {
-        width: 100%;
+        width: auto;
       }
 
       .search-input {
-        width: 100%;
+        width: 86px;
       }
 
       .hero-card {
@@ -495,8 +494,7 @@
       <div class="brand">圆圆识字</div>
       <div class="controls">
         <label class="search-wrap">
-          <span>搜索</span>
-          <input class="search-input" id="search-input" type="search" placeholder="搜字、组词、句子" autocomplete="off">
+          <input class="search-input" id="search-input" type="search" placeholder="搜字" aria-label="搜索字卡" autocomplete="off">
         </label>
         <div class="result-count" id="result-count"></div>
         <div class="tab-group" aria-label="选择字卡"></div>
