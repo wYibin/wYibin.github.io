@@ -51,6 +51,7 @@
       justify-content: space-between;
       align-items: center;
       gap: 14px;
+      min-width: 0;
     }
 
     .brand {
@@ -66,11 +67,46 @@
       justify-content: flex-end;
       gap: 8px;
       flex-wrap: wrap;
+      max-width: 100%;
+      min-width: 0;
+    }
+
+    .search-wrap {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .9);
+      padding: 0 12px;
+      color: var(--muted);
+      box-shadow: 0 8px 22px rgba(35, 52, 56, .08);
+    }
+
+    .search-input {
+      width: 180px;
+      min-height: 34px;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--ink);
+      font-size: 17px;
+    }
+
+    .result-count {
+      color: var(--muted);
+      font-size: 14px;
+      min-width: 52px;
     }
 
     .tab-group {
       display: inline-flex;
+      flex: 1 1 280px;
       gap: 4px;
+      max-width: min(100%, 560px);
+      min-width: 0;
+      overflow-x: auto;
       padding: 4px;
       border: 1px solid var(--line);
       border-radius: 8px;
@@ -109,6 +145,7 @@
 
     .stage {
       min-height: 0;
+      min-width: 0;
       display: grid;
       grid-template-columns: minmax(360px, .95fr) minmax(260px, .55fr);
       gap: 18px;
@@ -199,6 +236,7 @@
       display: grid;
       grid-template-columns: 1fr;
       gap: 12px;
+      min-width: 0;
     }
 
     .mini-card {
@@ -250,6 +288,16 @@
       color: var(--muted);
       font-size: 14px;
       line-height: 1.35;
+    }
+
+    .empty-state {
+      min-height: 280px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: var(--muted);
+      font-size: 26px;
+      font-weight: 800;
     }
 
     .print-grid {
@@ -312,6 +360,11 @@
 
       .controls {
         justify-content: flex-start;
+        width: 100%;
+      }
+
+      .tab-group {
+        max-width: 100%;
       }
 
       .stage {
@@ -365,6 +418,14 @@
         width: 28px;
         height: 30px;
         font-size: 20px;
+      }
+
+      .search-wrap {
+        width: 100%;
+      }
+
+      .search-input {
+        width: 100%;
       }
 
       .hero-card {
@@ -433,6 +494,11 @@
     <header class="toolbar">
       <div class="brand">圆圆识字</div>
       <div class="controls">
+        <label class="search-wrap">
+          <span>搜索</span>
+          <input class="search-input" id="search-input" type="search" placeholder="搜字、组词、句子" autocomplete="off">
+        </label>
+        <div class="result-count" id="result-count"></div>
         <div class="tab-group" aria-label="选择字卡"></div>
         <button class="print-button" type="button" onclick="window.print()">打印</button>
       </div>
@@ -448,33 +514,239 @@
 
   <script>
     const cards = [
-      {
-        char: "来",
-        words: ["来了", "过来", "回来"],
-        sentence: "圆圆快快走过来。",
-        art: "come"
-      },
-      {
-        char: "快",
-        words: ["快乐", "快跑", "快点"],
-        sentence: "我们快乐地向前跑。",
-        art: "fast"
-      },
-      {
-        char: "看",
-        words: ["看见", "看书", "看看"],
-        sentence: "我看见一朵小花。",
-        art: "look"
-      },
-      {
-        char: "跳",
-        words: ["跳高", "跳远", "跳一跳"],
-        sentence: "圆圆开心地跳起来。",
-        art: "jump"
-      }
+      { char: "一", words: ["一个", "一天", "一只"], sentence: "我有一个小球。", art: "number", count: 1 },
+      { char: "二", words: ["二月", "二人", "第二"], sentence: "二月里有春风。", art: "number", count: 2 },
+      { char: "三", words: ["三个", "三天", "三只"], sentence: "三只小鸟飞来了。", art: "number", count: 3 },
+      { char: "四", words: ["四个", "四月", "四只"], sentence: "桌上有四个杯子。", art: "number", count: 4 },
+      { char: "五", words: ["五个", "五月", "五天"], sentence: "五月花开了。", art: "number", count: 5 },
+      { char: "六", words: ["六个", "六月", "六只"], sentence: "六月的天很亮。", art: "number", count: 6 },
+      { char: "七", words: ["七个", "七天", "七月"], sentence: "七只小兔跳一跳。", art: "number", count: 7 },
+      { char: "八", words: ["八个", "八月", "八只"], sentence: "八朵小花开了。", art: "number", count: 8 },
+      { char: "九", words: ["九个", "九月", "九天"], sentence: "九月天气好。", art: "number", count: 9 },
+      { char: "十", words: ["十个", "十月", "十只"], sentence: "十个小球排成行。", art: "number", count: 10 },
+      { char: "西", words: ["西瓜", "西边", "东西"], sentence: "我吃甜甜的西瓜。", art: "west" },
+      { char: "只", words: ["一只", "只有", "只好"], sentence: "一只小鸟飞来了。", art: "bird" },
+      { char: "头", words: ["头发", "头上", "点头"], sentence: "我轻轻点点头。", art: "head" },
+      { char: "又", words: ["又来", "又大", "又高"], sentence: "小兔又跳起来。", art: "again" },
+      { char: "了", words: ["来了", "好了", "跑了"], sentence: "爸爸回来了。", art: "done" },
+      { char: "木", words: ["木头", "树木", "木马"], sentence: "树木长高了。", art: "tree" },
+      { char: "大", words: ["大人", "大山", "大门"], sentence: "大山高高的。", art: "big" },
+      { char: "小", words: ["小手", "小鸟", "小花"], sentence: "小花开了。", art: "small" },
+      { char: "王", words: ["王子", "大王", "小王"], sentence: "小王在看书。", art: "crown" },
+      { char: "多", words: ["多少", "很多", "多云"], sentence: "天上有很多云。", art: "many" },
+      { char: "少", words: ["少年", "很少", "多少"], sentence: "杯子里的水很少。", art: "few" },
+      { char: "白", words: ["白云", "白天", "白色"], sentence: "白云飘在天上。", art: "cloud" },
+      { char: "天", words: ["今天", "天上", "白天"], sentence: "今天是晴天。", art: "sky" },
+      { char: "云", words: ["白云", "云朵", "多云"], sentence: "天上有白云。", art: "cloud" },
+      { char: "山", words: ["大山", "山上", "火山"], sentence: "山上有白云。", art: "mountain" },
+      { char: "太", words: ["太阳", "太大", "太好了"], sentence: "太阳出来了。", art: "sun" },
+      { char: "阳", words: ["太阳", "阳光", "向阳"], sentence: "阳光照进来。", art: "sun" },
+      { char: "月", words: ["月亮", "月牙", "明月"], sentence: "月亮弯弯挂天上。", art: "moon" },
+      { char: "京", words: ["北京", "南京", "京城"], sentence: "我想去北京。", art: "city" },
+      { char: "星", words: ["星星", "星空", "明星"], sentence: "夜里有星星。", art: "star" },
+      { char: "马", words: ["小马", "木马", "马上"], sentence: "小马跑得快。", art: "horse" },
+      { char: "牛", words: ["小牛", "牛奶", "黄牛"], sentence: "小牛在草地上。", art: "cow" },
+      { char: "羊", words: ["小羊", "山羊", "羊毛"], sentence: "小羊吃青草。", art: "sheep" },
+      { char: "兔", words: ["小兔", "白兔", "兔子"], sentence: "小兔跳一跳。", art: "rabbit" },
+      { char: "虫", words: ["小虫", "虫子", "毛毛虫"], sentence: "小虫在草里。", art: "bug" },
+      { char: "鸟", words: ["小鸟", "飞鸟", "鸟叫"], sentence: "小鸟飞上天。", art: "bird" },
+      { char: "花", words: ["小花", "花朵", "开花"], sentence: "小花开了。", art: "flower" },
+      { char: "草", words: ["小草", "草地", "青草"], sentence: "小草绿绿的。", art: "grass" },
+      { char: "地", words: ["草地", "地上", "土地"], sentence: "我坐在草地上。", art: "ground" },
+      { char: "跑", words: ["跑步", "快跑", "跑来"], sentence: "小马快快跑。", art: "run" },
+      { char: "高", words: ["高山", "高高", "跳高"], sentence: "大树长得高。", art: "high" },
+      { char: "兴", words: ["高兴", "兴奋", "兴趣"], sentence: "圆圆很高兴。", art: "happy" },
+      { char: "快", words: ["快乐", "快跑", "快点"], sentence: "我们快乐地向前跑。", art: "fast" },
+      { char: "乐", words: ["快乐", "音乐", "乐园"], sentence: "大家都快乐。", art: "music" },
+      { char: "妈", words: ["妈妈", "妈咪", "爸妈"], sentence: "妈妈抱抱我。", art: "mom" },
+      { char: "的", words: ["我的", "好的", "小的"], sentence: "这是我的书。", art: "mine" },
+      { char: "爸", words: ["爸爸", "爸妈", "老爸"], sentence: "爸爸回来了。", art: "dad" },
+      { char: "看", words: ["看见", "看书", "看看"], sentence: "我看见一朵小花。", art: "look" },
+      { char: "来", words: ["来了", "过来", "回来"], sentence: "圆圆快快走过来。", art: "come" },
+      { char: "跳", words: ["跳高", "跳远", "跳一跳"], sentence: "圆圆开心地跳起来。", art: "jump" }
     ];
 
     const artMap = {
+      west: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="西边">
+          <circle cx="36" cy="48" r="14" fill="var(--yellow)"/>
+          <path d="M20 88 H96" stroke="var(--blue)" stroke-width="8" stroke-linecap="round"/>
+          <path d="M80 38 L52 60 L80 82" fill="none" stroke="var(--green)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>`,
+      bird: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="小鸟">
+          <path d="M23 64 C39 42 58 42 74 64 C88 57 98 58 106 69" fill="none" stroke="var(--green)" stroke-width="8" stroke-linecap="round"/>
+          <path d="M39 77 C55 91 77 91 92 75" fill="none" stroke="var(--blue)" stroke-width="8" stroke-linecap="round"/>
+          <circle cx="77" cy="58" r="5" fill="var(--yellow)"/>
+        </svg>`,
+      head: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="头">
+          <circle cx="60" cy="57" r="28" fill="none" stroke="var(--green)" stroke-width="8"/>
+          <path d="M40 38 C50 24 74 24 83 40" fill="none" stroke="var(--coral)" stroke-width="8" stroke-linecap="round"/>
+          <path d="M42 91 H78" stroke="var(--blue)" stroke-width="8" stroke-linecap="round"/>
+        </svg>`,
+      again: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="又来一次">
+          <path d="M78 31 C46 31 30 52 43 74 C54 92 84 90 94 68" fill="none" stroke="var(--green)" stroke-width="8" stroke-linecap="round"/>
+          <path d="M73 17 L88 31 L73 45" fill="none" stroke="var(--green)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="43" cy="75" r="7" fill="var(--yellow)"/>
+        </svg>`,
+      done: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="好了">
+          <path d="M24 64 L48 86 L96 32" fill="none" stroke="var(--green)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M30 98 H90" stroke="var(--blue)" stroke-width="8" stroke-linecap="round"/>
+        </svg>`,
+      tree: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="树木">
+          <path d="M60 31 V99" stroke="var(--green)" stroke-width="9" stroke-linecap="round"/>
+          <path d="M60 37 C43 52 32 68 22 88 M60 42 C78 54 91 71 101 88" fill="none" stroke="var(--green)" stroke-width="8" stroke-linecap="round"/>
+          <path d="M34 99 H91" stroke="var(--blue)" stroke-width="8" stroke-linecap="round"/>
+        </svg>`,
+      big: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="大和小">
+          <circle cx="69" cy="56" r="34" fill="none" stroke="var(--green)" stroke-width="9"/>
+          <circle cx="28" cy="82" r="10" fill="var(--yellow)"/>
+          <path d="M28 99 H95" stroke="var(--blue)" stroke-width="8" stroke-linecap="round"/>
+        </svg>`,
+      small: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="小">
+          <circle cx="60" cy="60" r="14" fill="var(--yellow)"/>
+          <path d="M30 91 H90" stroke="var(--blue)" stroke-width="8" stroke-linecap="round"/>
+        </svg>`,
+      crown: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="王冠">
+          <path d="M25 79 L35 42 L55 66 L74 39 L95 79 Z" fill="none" stroke="var(--yellow)" stroke-width="8" stroke-linejoin="round"/>
+          <path d="M28 91 H92" stroke="var(--blue)" stroke-width="8" stroke-linecap="round"/>
+        </svg>`,
+      many: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="很多">
+          <circle cx="35" cy="37" r="8" fill="var(--green)"/><circle cx="60" cy="35" r="8" fill="var(--yellow)"/><circle cx="85" cy="39" r="8" fill="var(--coral)"/>
+          <circle cx="45" cy="64" r="8" fill="var(--blue)"/><circle cx="72" cy="65" r="8" fill="var(--green)"/><circle cx="58" cy="90" r="8" fill="var(--yellow)"/>
+        </svg>`,
+      few: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="很少">
+          <circle cx="48" cy="55" r="11" fill="var(--green)"/>
+          <circle cx="75" cy="76" r="9" fill="var(--yellow)"/>
+          <path d="M32 96 H88" stroke="var(--blue)" stroke-width="8" stroke-linecap="round"/>
+        </svg>`,
+      cloud: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="白云">
+          <path d="M27 72 C28 58 40 51 51 55 C57 39 82 40 87 58 C101 58 106 71 99 81 H31 C23 80 21 74 27 72 Z" fill="none" stroke="var(--green)" stroke-width="8" stroke-linejoin="round"/>
+          <path d="M29 92 H93" stroke="var(--blue)" stroke-width="8" stroke-linecap="round"/>
+        </svg>`,
+      sky: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="天空">
+          <circle cx="83" cy="33" r="13" fill="var(--yellow)"/>
+          <path d="M20 75 C38 54 55 54 73 75 M31 92 H97" fill="none" stroke="var(--blue)" stroke-width="8" stroke-linecap="round"/>
+        </svg>`,
+      mountain: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="山">
+          <circle cx="90" cy="28" r="13" fill="var(--yellow)"/>
+          <path d="M16 86 L48 38 L82 86 Z" fill="none" stroke="var(--green)" stroke-width="8" stroke-linejoin="round"/>
+          <path d="M52 86 L79 52 L105 86 Z" fill="none" stroke="var(--green)" stroke-width="8" stroke-linejoin="round"/>
+          <path d="M27 92 H100" stroke="var(--blue)" stroke-width="8" stroke-linecap="round"/>
+        </svg>`,
+      sun: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="太阳">
+          <circle cx="60" cy="56" r="26" fill="none" stroke="var(--yellow)" stroke-width="9"/>
+          <path d="M60 10 V22 M60 90 V106 M14 56 H27 M93 56 H106 M27 23 L36 32 M84 80 L93 89 M93 23 L84 32 M36 80 L27 89" stroke="var(--green)" stroke-width="7" stroke-linecap="round"/>
+        </svg>`,
+      moon: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="月亮">
+          <path d="M75 18 C47 26 35 52 45 75 C55 98 82 104 100 86 C84 91 65 82 57 64 C48 44 56 27 75 18 Z" fill="none" stroke="var(--green)" stroke-width="8" stroke-linejoin="round"/>
+          <path d="M26 92 H94" stroke="var(--blue)" stroke-width="8" stroke-linecap="round"/>
+        </svg>`,
+      city: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="城市">
+          <path d="M28 91 V45 H51 V91 M57 91 V30 H92 V91" fill="none" stroke="var(--green)" stroke-width="8" stroke-linejoin="round"/>
+          <path d="M36 58 H43 M66 45 H82 M66 61 H82 M20 96 H101" stroke="var(--blue)" stroke-width="7" stroke-linecap="round"/>
+        </svg>`,
+      star: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="星星">
+          <path d="M60 20 L70 48 L100 48 L76 65 L85 94 L60 76 L35 94 L44 65 L20 48 L50 48 Z" fill="none" stroke="var(--yellow)" stroke-width="8" stroke-linejoin="round"/>
+        </svg>`,
+      horse: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="小马">
+          <path d="M29 78 C37 43 64 30 84 47 C95 56 90 78 76 82 L48 84" fill="none" stroke="var(--green)" stroke-width="8" stroke-linecap="round"/>
+          <path d="M47 84 L39 101 M72 82 L83 99" stroke="var(--coral)" stroke-width="7" stroke-linecap="round"/>
+        </svg>`,
+      cow: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="小牛">
+          <path d="M36 48 C26 34 31 24 46 35 M84 48 C94 34 89 24 74 35" fill="none" stroke="var(--green)" stroke-width="8" stroke-linecap="round"/>
+          <rect x="34" y="43" width="52" height="45" rx="16" fill="none" stroke="var(--green)" stroke-width="8"/>
+          <path d="M50 70 H70" stroke="var(--blue)" stroke-width="7" stroke-linecap="round"/>
+        </svg>`,
+      sheep: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="小羊">
+          <path d="M30 70 C25 54 39 43 51 50 C57 34 80 39 79 56 C95 56 99 76 83 84 H43 C34 84 29 79 30 70 Z" fill="none" stroke="var(--green)" stroke-width="8" stroke-linejoin="round"/>
+          <path d="M44 88 V101 M78 88 V101" stroke="var(--coral)" stroke-width="7" stroke-linecap="round"/>
+        </svg>`,
+      rabbit: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="小兔">
+          <path d="M47 48 C36 23 48 18 58 44 M66 45 C72 18 86 22 78 49" fill="none" stroke="var(--green)" stroke-width="8" stroke-linecap="round"/>
+          <circle cx="62" cy="68" r="24" fill="none" stroke="var(--green)" stroke-width="8"/>
+          <circle cx="71" cy="63" r="5" fill="var(--yellow)"/>
+        </svg>`,
+      bug: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="小虫">
+          <circle cx="60" cy="61" r="25" fill="none" stroke="var(--green)" stroke-width="8"/>
+          <path d="M35 46 L23 34 M85 46 L97 34 M35 76 L22 88 M85 76 L98 88 M60 36 V87" stroke="var(--blue)" stroke-width="6" stroke-linecap="round"/>
+        </svg>`,
+      flower: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="小花">
+          <path d="M61 61 V99" stroke="var(--green)" stroke-width="8" stroke-linecap="round"/>
+          <path d="M43 74 C51 60 70 60 79 74 M45 49 C53 35 69 35 77 49" fill="none" stroke="var(--coral)" stroke-width="8" stroke-linecap="round"/>
+          <circle cx="61" cy="58" r="9" fill="var(--yellow)"/>
+        </svg>`,
+      grass: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="小草">
+          <path d="M28 92 C37 67 47 54 58 92 M58 92 C63 63 76 48 91 92 M20 98 H100" fill="none" stroke="var(--green)" stroke-width="8" stroke-linecap="round"/>
+        </svg>`,
+      ground: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="地上">
+          <path d="M20 84 H100" stroke="var(--blue)" stroke-width="8" stroke-linecap="round"/>
+          <path d="M34 83 C42 62 52 58 60 83 M64 83 C71 66 84 61 91 83" fill="none" stroke="var(--green)" stroke-width="7" stroke-linecap="round"/>
+        </svg>`,
+      run: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="跑步">
+          <path d="M12 42 H40 M8 62 H34 M18 82 H46" stroke="var(--blue)" stroke-width="8" stroke-linecap="round"/>
+          <circle cx="67" cy="35" r="9" fill="var(--yellow)"/>
+          <path d="M66 47 L55 66 L77 63 M56 66 L41 87 M64 68 L86 86 M77 63 L98 52" fill="none" stroke="var(--green)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>`,
+      high: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="高高">
+          <path d="M60 96 V26" stroke="var(--green)" stroke-width="9" stroke-linecap="round"/>
+          <path d="M44 42 L60 25 L76 42" fill="none" stroke="var(--green)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M26 96 H94" stroke="var(--blue)" stroke-width="8" stroke-linecap="round"/>
+        </svg>`,
+      happy: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="高兴">
+          <circle cx="60" cy="58" r="30" fill="none" stroke="var(--yellow)" stroke-width="8"/>
+          <path d="M45 52 H46 M74 52 H75 M43 70 C52 81 69 82 79 70" fill="none" stroke="var(--green)" stroke-width="7" stroke-linecap="round"/>
+        </svg>`,
+      music: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="音乐">
+          <path d="M74 24 V76 C74 87 63 94 52 90 C42 86 42 75 53 71 C60 69 67 71 74 76 M74 24 L95 31" fill="none" stroke="var(--green)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M28 91 H92" stroke="var(--blue)" stroke-width="8" stroke-linecap="round"/>
+        </svg>`,
+      mom: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="妈妈">
+          <circle cx="45" cy="45" r="12" fill="var(--yellow)"/>
+          <circle cx="76" cy="43" r="9" fill="var(--coral)"/>
+          <path d="M45 58 L35 84 H58 Z M76 55 L66 82 H88 Z" fill="none" stroke="var(--green)" stroke-width="8" stroke-linejoin="round"/>
+        </svg>`,
+      dad: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="爸爸">
+          <circle cx="57" cy="39" r="13" fill="var(--yellow)"/>
+          <path d="M57 55 L42 88 H75 Z" fill="none" stroke="var(--green)" stroke-width="8" stroke-linejoin="round"/>
+          <path d="M39 62 L23 77 M75 62 L95 76" stroke="var(--blue)" stroke-width="8" stroke-linecap="round"/>
+        </svg>`,
+      mine: `
+        <svg viewBox="0 0 120 120" role="img" aria-label="我的">
+          <rect x="30" y="30" width="60" height="70" rx="8" fill="none" stroke="var(--green)" stroke-width="8"/>
+          <path d="M43 52 H77 M43 70 H70" stroke="var(--blue)" stroke-width="7" stroke-linecap="round"/>
+          <circle cx="86" cy="30" r="9" fill="var(--yellow)"/>
+        </svg>`,
       come: `
         <svg viewBox="0 0 120 120" role="img" aria-label="走过来">
           <path d="M18 52 L38 34 L58 52" fill="none" stroke="var(--green)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
@@ -516,12 +788,40 @@
     const tabs = document.querySelector(".tab-group");
     const miniList = document.querySelector("#mini-list");
     const printGrid = document.querySelector("#print-grid");
+    const searchInput = document.querySelector("#search-input");
+    const resultCount = document.querySelector("#result-count");
+    const state = { selected: 0, query: "" };
+
+    function numberArt(count) {
+      const positions = [
+        [60, 28], [43, 46], [77, 46], [34, 66], [60, 66],
+        [86, 66], [35, 88], [52, 93], [70, 93], [88, 88]
+      ];
+      const dots = positions.slice(0, count).map(([cx, cy], index) => {
+        const fill = index % 3 === 0 ? "var(--green)" : index % 3 === 1 ? "var(--yellow)" : "var(--coral)";
+        return `<circle cx="${cx}" cy="${cy}" r="8" fill="${fill}"/>`;
+      }).join("");
+      return `
+        <svg viewBox="0 0 120 120" role="img" aria-label="${count}个">
+          ${dots}
+          <path d="M28 104 H92" stroke="var(--blue)" stroke-width="8" stroke-linecap="round"/>
+        </svg>`;
+    }
+
+    function artHtml(card) {
+      if (card.art === "number") return numberArt(card.count || 1);
+      return artMap[card.art] || `
+        <svg viewBox="0 0 120 120" role="img" aria-label="字义">
+          <circle cx="60" cy="55" r="28" fill="none" stroke="var(--green)" stroke-width="8"/>
+          <path d="M30 92 H90" stroke="var(--blue)" stroke-width="8" stroke-linecap="round"/>
+        </svg>`;
+    }
 
     function cardHtml(card, className = "") {
       return `
         <div class="${className ? className + "-main" : "hero-main"}">
           <div class="hanzi">${card.char}</div>
-          <div class="art">${artMap[card.art]}</div>
+          <div class="art">${artHtml(card)}</div>
         </div>
         <div class="words">
           ${card.words.map((word) => `<span class="word">${word}</span>`).join("")}
@@ -538,18 +838,54 @@
             <div class="mini-words">${card.words.map((word) => `<span>${word}</span>`).join("")}</div>
             <div class="mini-sentence">${card.sentence}</div>
           </div>
-          <div class="art">${artMap[card.art]}</div>
+          <div class="art">${artHtml(card)}</div>
         </article>
       `;
     }
 
-    function render(index = 0) {
+    function visibleIndexes() {
+      const query = state.query.trim();
+      if (!query) return cards.map((_, index) => index);
+      return cards
+        .map((card, index) => ({ card, index }))
+        .map(({ card, index }) => {
+          const haystack = [card.char, ...card.words, card.sentence].join("");
+          let score = 99;
+          if (card.char === query) score = 0;
+          else if (card.words.includes(query)) score = 1;
+          else if (card.words.some((word) => word.includes(query))) score = 2;
+          else if (card.sentence.includes(query)) score = 3;
+          else if (haystack.includes(query)) score = 4;
+          return { index, score };
+        })
+        .filter(({ score }) => score < 99)
+        .sort((a, b) => a.score - b.score || a.index - b.index)
+        .map(({ index }) => index);
+    }
+
+    function render(index = state.selected) {
+      const visible = visibleIndexes();
+      resultCount.textContent = `${visible.length} 张`;
+
+      if (!visible.length) {
+        hero.innerHTML = `<div class="empty-state">没有找到这个字</div>`;
+        tabs.innerHTML = "";
+        miniList.innerHTML = "";
+        printGrid.innerHTML = "";
+        return;
+      }
+
+      if (!visible.includes(index)) index = visible[0];
+      state.selected = index;
       const card = cards[index];
       hero.innerHTML = cardHtml(card);
-      tabs.querySelectorAll(".tab").forEach((tab, tabIndex) => {
-        tab.setAttribute("aria-pressed", String(tabIndex === index));
+      tabs.innerHTML = visible.map((itemIndex) => `
+        <button class="tab" type="button" aria-pressed="${itemIndex === index}" data-index="${itemIndex}">${cards[itemIndex].char}</button>
+      `).join("");
+      tabs.querySelectorAll(".tab").forEach((tab) => {
+        tab.addEventListener("click", () => render(Number(tab.dataset.index)));
       });
-      miniList.innerHTML = cards.map((item, itemIndex) => miniHtml(item, itemIndex, itemIndex === index)).join("");
+      miniList.innerHTML = visible.map((itemIndex) => miniHtml(cards[itemIndex], itemIndex, itemIndex === index)).join("");
       miniList.querySelectorAll(".mini-card").forEach((node) => {
         const nextIndex = Number(node.dataset.index);
         node.addEventListener("click", () => render(nextIndex));
@@ -557,19 +893,15 @@
           if (event.key === "Enter" || event.key === " ") render(nextIndex);
         });
       });
+      printGrid.innerHTML = visible.map((itemIndex) => `
+        <article class="print-card">${cardHtml(cards[itemIndex], "print-card")}</article>
+      `).join("");
     }
 
-    tabs.innerHTML = cards.map((card, index) => `
-      <button class="tab" type="button" aria-pressed="${index === 0}" data-index="${index}">${card.char}</button>
-    `).join("");
-
-    tabs.querySelectorAll(".tab").forEach((tab) => {
-      tab.addEventListener("click", () => render(Number(tab.dataset.index)));
+    searchInput.addEventListener("input", () => {
+      state.query = searchInput.value;
+      render(state.selected);
     });
-
-    printGrid.innerHTML = cards.map((card) => `
-      <article class="print-card">${cardHtml(card, "print-card")}</article>
-    `).join("");
 
     render(0);
   </script>
