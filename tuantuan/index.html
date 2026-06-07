@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>团团识字</title>
+  <style>
+    :root {
+      --ink: #172326;
+      --muted: #65777a;
+      --line: #d8e4e1;
+      --paper: #fffdf8;
+      --green: #2f8f73;
+      --green-soft: #e6f4ee;
+      --coral: #ef6f61;
+      --blue: #5398c3;
+      --yellow: #f2bf48;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      color: var(--ink);
+      background: #f5faf8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        linear-gradient(180deg, #f5faf8 0%, #fffdf8 54%, #eef7fb 100%);
+    }
+
+    .page {
+      width: min(1120px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 28px 0 44px;
+    }
+
+    .top {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 18px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h1,
+    h2,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: clamp(28px, 5vw, 54px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: clamp(16px, 2vw, 22px);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .section {
+      padding: 28px 0 0;
+    }
+
+    h2 {
+      font-size: clamp(22px, 3vw, 34px);
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .char-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .char {
+      min-height: 110px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .9);
+      color: var(--ink);
+      font-family: "Kaiti SC", "STKaiti", "KaiTi", "Songti SC", serif;
+      font-size: clamp(58px, 8vw, 82px);
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .word-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(138px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .word {
+      min-height: 76px;
+      display: grid;
+      place-items: center;
+      border: 1px solid #bad7cf;
+      border-radius: 8px;
+      background: var(--green-soft);
+      color: #216657;
+      font-size: clamp(30px, 4vw, 44px);
+      font-weight: 800;
+      line-height: 1.12;
+    }
+
+    .sentence-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .sentence {
+      border: 1px solid var(--line);
+      border-left: 8px solid var(--coral);
+      border-radius: 8px;
+      background: var(--paper);
+      padding: 16px 18px;
+      font-size: clamp(24px, 3.5vw, 40px);
+      font-weight: 800;
+      line-height: 1.45;
+    }
+
+    .sentence:nth-child(3n + 2) {
+      border-left-color: var(--green);
+    }
+
+    .sentence:nth-child(3n) {
+      border-left-color: var(--blue);
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        width: min(100% - 20px, 560px);
+        padding-top: 18px;
+      }
+
+      .top {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .subtitle {
+        white-space: normal;
+      }
+
+      .char-grid {
+        grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+        gap: 8px;
+      }
+
+      .char {
+        min-height: 84px;
+      }
+
+      .word-grid {
+        grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+        gap: 8px;
+      }
+
+      .word {
+        min-height: 62px;
+      }
+
+      .sentence {
+        padding: 13px 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="top">
+      <h1>团团识字</h1>
+      <p class="subtitle">单字 · 词 · 句子</p>
+    </header>
+
+    <section class="section" aria-labelledby="characters-title">
+      <h2 id="characters-title">单字</h2>
+      <div class="char-grid" aria-label="单字">
+        <span class="char">健</span>
+        <span class="char">营</span>
+        <span class="char">业</span>
+        <span class="char">厨</span>
+        <span class="char">房</span>
+        <span class="char">浴</span>
+        <span class="char">池</span>
+        <span class="char">宽</span>
+        <span class="char">敞</span>
+        <span class="char">依</span>
+        <span class="char">然</span>
+        <span class="char">墨</span>
+        <span class="char">丸</span>
+        <span class="char">联</span>
+        <span class="char">系</span>
+        <span class="char">影</span>
+        <span class="char">响</span>
+        <span class="char">漱</span>
+        <span class="char">口</span>
+        <span class="char">偷</span>
+        <span class="char">懒</span>
+        <span class="char">淡</span>
+        <span class="char">漠</span>
+        <span class="char">般</span>
+        <span class="char">绝</span>
+        <span class="char">对</span>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="words-title">
+      <h2 id="words-title">词</h2>
+      <div class="word-grid" aria-label="词">
+        <span class="word">健太</span>
+        <span class="word">营业</span>
+        <span class="word">厨房</span>
+        <span class="word">浴池</span>
+        <span class="word">宽敞</span>
+        <span class="word">依然</span>
+        <span class="word">墨丸</span>
+        <span class="word">联系</span>
+        <span class="word">影响</span>
+        <span class="word">漱口</span>
+        <span class="word">偷懒</span>
+        <span class="word">淡漠</span>
+        <span class="word">哼哼般</span>
+        <span class="word">绝对</span>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="sentences-title">
+      <h2 id="sentences-title">句子</h2>
+      <ul class="sentence-list" aria-label="句子">
+        <li class="sentence">红子像往常一样对健太说。</li>
+        <li class="sentence">今天的营业到此结束。</li>
+        <li class="sentence">钱天堂的地下室不仅有厨房，还有一个浴池。</li>
+        <li class="sentence">浴池和公共澡堂里的一样宽敞。</li>
+        <li class="sentence">喝完牛奶后依然闷闷不乐。</li>
+        <li class="sentence">墨丸比平时更加仔细地监视着健太。</li>
+        <li class="sentence">我和家人联系过没有吗？</li>
+        <li class="sentence">我不去学校有影响吗？</li>
+        <li class="sentence">没有认真刷牙、洗手、漱口？</li>
+        <li class="sentence">因为偷懒不刷牙而长蛀牙。</li>
+        <li class="sentence">听完红子淡漠的回答，健太低下头。</li>
+        <li class="sentence">他发出蚊子哼哼般的声音。</li>
+        <li class="sentence">绝对没有这样的事。</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>
